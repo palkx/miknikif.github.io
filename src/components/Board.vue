@@ -91,7 +91,6 @@ export default class Board extends Vue {
 
   public move(isRow = true, moveToStart = false): boolean {
     let changed = false;
-    // console.log("move begin");
 
     for (let index = 0; index < this.size; index++) {
       let array = this.tiles.filter(tile => {
@@ -103,10 +102,8 @@ export default class Board extends Vue {
       });
       if (moveToStart) array = array.reverse();
 
-      // console.log(array.map(tile => tile.number));
       changed = this.merge(array) || changed;
     }
-    // console.log("move end is changed " + changed);
     return changed;
   }
 
@@ -249,5 +246,9 @@ export default class Board extends Vue {
     height: 400px;
     padding-top: 0;
   }
+}
+
+.flip-list-move {
+  transition: transform 1s;
 }
 </style>
