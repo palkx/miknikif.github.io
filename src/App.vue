@@ -8,7 +8,9 @@
         <router-link to="/2048">2048</router-link> |
         <router-link to="/about">About</router-link>
       </div>
-      <router-view />
+      <keep-alive>
+        <router-view />
+      </keep-alive>
     </v-content>
   </v-app>
 </template>

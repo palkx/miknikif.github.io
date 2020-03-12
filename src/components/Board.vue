@@ -243,10 +243,10 @@ export default class Board extends Vue {
   }
 }
 
-@media only screen and (min-width: 1000px) {
+@media only screen and (min-width: 800px) {
   .container {
-    width: 500px;
-    height: 500px;
+    width: 400px;
+    height: 400px;
     padding-top: 0;
   }
 }
