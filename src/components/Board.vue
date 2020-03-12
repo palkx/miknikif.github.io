@@ -28,61 +28,166 @@ export default class Board extends Vue {
 
   created() {
     this.createBoard(this.size);
+    addEventListener("keyup", this.keyMoniter);
+  }
+
+  destroyed() {
+    removeEventListener("keyup", this.keyMoniter);
   }
 
   public createBoard(size: number) {
     this.size = size;
     for (let index = 0; index < this.size * this.size; index++) {
-      const tileInfo = new TileInfo(0, index / size, index % size);
+      const tileInfo = new TileInfo(0, Math.floor(index / size), index % size);
       this.tiles.push(tileInfo);
     }
     this.putNumber();
-    console.log(this.tiles);
+    // this.putALotNumbers();
   }
 
-  private putNumber() {
+  private putNumber(number = 1) {
     const max = this.size * this.size;
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const index = Math.floor(Math.random() * max);
       if (this.tiles[index].number == 0) {
-        this.tiles[index].number = 1;
+        this.tiles[index].number = number;
         break;
       }
     }
   }
 
-  public merge(array: number[]): number[] {
-    // console.log("start");
-    // console.log(array);
+  private putALotNumbers() {
+    for (const number of [2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8]) {
+      this.putNumber(number);
+    }
+  }
+
+  public keyMoniter(event: Event) {
+    if (!(event instanceof KeyboardEvent)) return;
+    switch (event.key) {
+      case "ArrowLeft":
+      case "a":
+        this.left();
+        break;
+      case "ArrowUp":
+      case "w":
+        this.up();
+        break;
+      case "ArrowRight":
+      case "d":
+        this.right();
+        break;
+      case "ArrowDown":
+      case "s":
+        this.down();
+        break;
+      default:
+        break;
+    }
+  }
+
+  public move(isRow = true, moveToStart = false): boolean {
+    let changed = false;
+    // console.log("move begin");
+
+    for (let index = 0; index < this.size; index++) {
+      let array = this.tiles.filter(tile => {
+        if (isRow) {
+          return tile.row === index;
+        } else {
+          return tile.column === index;
+        }
+      });
+      if (moveToStart) array = array.reverse();
+
+      // console.log(array.map(tile => tile.number));
+      changed = this.merge(array) || changed;
+    }
+    // console.log("move end is changed " + changed);
+    return changed;
+  }
+
+  public moveAndCheck(isRow: boolean, moveToStart: boolean) {
+    if (this.move(isRow, moveToStart)) {
+      this.putNumber();
+      if (this.isGameOver()) {
+        console.log("GAME OVER!");
+
+        // confirm("GAME OVER! Start a new game?");
+        // this.createBoard(this.size);
+      }
+    }
+  }
+
+  public isGameOver(): boolean {
+    const zeros = this.tiles.filter(tile => tile.number === 0);
+    if (zeros.length > 0) {
+      return false;
+    }
+
+    for (let index = 0; index < this.size; index++) {
+      if (this.canMove(this.tiles.filter(tile => tile.row === index))) {
+        return false;
+      }
+      if (this.canMove(this.tiles.filter(tile => tile.column === index))) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private canMove(row: TileInfo[]): boolean {
+    for (let index = 0; index < row.length - 1; index++) {
+      const number = row[index].number;
+      if (number === row[index + 1].number) return true;
+    }
+    return false;
+  }
+
+  public up() {
+    this.moveAndCheck(false, false);
+  }
+
+  public down() {
+    this.moveAndCheck(false, true);
+  }
+
+  public left() {
+    this.moveAndCheck(true, false);
+  }
+
+  public right() {
+    this.moveAndCheck(true, true);
+  }
+
+  public merge(array: TileInfo[]): boolean {
     let previousIndex = 0;
+    let changed = false;
     for (let index = 1; index < array.length; index++) {
-      if (array[index] === 0) continue;
+      if (array[index].number === 0) continue;
       while (
-        array[previousIndex] != 0 &&
-        array[previousIndex] != array[index] &&
+        array[previousIndex].number != 0 &&
+        array[previousIndex].number != array[index].number &&
         previousIndex < index - 1
       ) {
         previousIndex++;
       }
 
-      // console.log(
-      // "previous " + array[previousIndex] + " index " + previousIndex
-      // );
-      if (array[previousIndex] === 0) {
-        array[previousIndex] = array[index];
-        array[index] = 0;
-      } else if (array[previousIndex] === array[index]) {
-        array[previousIndex] += 1;
-        array[index] = 0;
+      if (array[previousIndex].number === 0) {
+        array[previousIndex].number = array[index].number;
+        array[index].number = 0;
+        changed = true;
+      } else if (array[previousIndex].number === array[index].number) {
+        array[previousIndex].number += 1;
+        array[index].number = 0;
+        changed = true;
         previousIndex++;
       } else {
         previousIndex++;
       }
-      // console.log(array);
     }
-    // console.log("end");
-    return array;
+    return changed;
   }
 }
 </script>
@@ -107,15 +212,19 @@ export default class Board extends Vue {
   right: 0;
   display: flex;
   justify-content: center;
+  align-content: stretch;
   flex-wrap: wrap;
 }
+
 .tile {
   display: flex;
   box-sizing: border-box;
   width: 25%;
+  height: 25%;
   align-items: center;
   justify-content: center;
   background: lightblue;
+  flex-wrap: wrap;
 }
 
 @media only screen and (max-width: 500px) {

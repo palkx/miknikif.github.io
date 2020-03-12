@@ -1,6 +1,6 @@
 <template>
   <div class="tile">
-    <h1 class="number">{{ number }}</h1>
+    <h1 class="number">{{ showText() }}</h1>
   </div>
 </template>
 
@@ -10,6 +10,10 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 @Component
 export default class Tile extends Vue {
   @Prop({ required: true }) readonly number!: number;
-  // @Prop({ required: true }) readonly index: number;
+
+  showText() {
+    if (this.number === 0) return "";
+    return Math.pow(2, this.number);
+  }
 }
 </script>

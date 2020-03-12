@@ -6,4 +6,9 @@ export default class TileInfo {
     public moved: boolean = false,
     public merged: boolean = false
   ) { }
+
+  public info(): string {
+    return "number " + this.number + " row " + this.row + " column " + this.column 
+    // + " merged " + this.merged + " moved " + this.moved
+  }
 }
