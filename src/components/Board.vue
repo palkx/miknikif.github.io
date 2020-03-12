@@ -35,8 +35,9 @@ export default class Board extends Vue {
     removeEventListener("keyup", this.keyMoniter);
   }
 
-  public createBoard(size: number) {
+  public createBoard(size: number = this.size) {
     this.size = size;
+    this.tiles.length = 0;
     for (let index = 0; index < this.size * this.size; index++) {
       const tileInfo = new TileInfo(0, Math.floor(index / size), index % size);
       this.tiles.push(tileInfo);
@@ -112,6 +113,7 @@ export default class Board extends Vue {
     if (this.move(isRow, moveToStart)) {
       this.putNumber();
       if (this.isGameOver()) {
+        this.$emit("game-over");
         // console.log("GAME OVER!");
         // confirm("GAME OVER! Start a new game?");
         // this.createBoard(this.size);
