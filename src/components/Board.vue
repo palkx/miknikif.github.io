@@ -112,8 +112,7 @@ export default class Board extends Vue {
     if (this.move(isRow, moveToStart)) {
       this.putNumber();
       if (this.isGameOver()) {
-        console.log("GAME OVER!");
-
+        // console.log("GAME OVER!");
         // confirm("GAME OVER! Start a new game?");
         // this.createBoard(this.size);
       }
