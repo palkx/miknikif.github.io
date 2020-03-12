@@ -1,7 +1,8 @@
 <template>
   <div class="game2048">
     <h1>A simple 2048.</h1>
-    <board ref="board" @game-over="gameOver" />
+    <h2>Score: {{ score }}</h2>
+    <board ref="board" @game-over="gameOver" @score-changed="showScore" />
     <div v-if="!gaming">
       <h2>Game Over!</h2>
       <v-btn @click="restart">
@@ -33,6 +34,10 @@ export default class Game2048 extends Vue {
 
   private gameOver() {
     this.gaming = false;
+  }
+
+  private showScore(newScore: number) {
+    this.score = newScore;
   }
 }
 </script>

@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import Tile from "@/components/Tile.vue";
 import TileInfo from "@/components/TileInfo.ts";
 
@@ -36,6 +36,7 @@ export default class Board extends Vue {
   }
 
   public createBoard(size: number = this.size) {
+    this.scoreChanged(0);
     this.size = size;
     this.tiles.length = 0;
     for (let index = 0; index < this.size * this.size; index++) {
@@ -114,9 +115,6 @@ export default class Board extends Vue {
       this.putNumber();
       if (this.isGameOver()) {
         this.$emit("game-over");
-        // console.log("GAME OVER!");
-        // confirm("GAME OVER! Start a new game?");
-        // this.createBoard(this.size);
       }
     }
   }
@@ -162,6 +160,11 @@ export default class Board extends Vue {
     this.moveAndCheck(true, true);
   }
 
+  private scoreChanged(newScore: number) {
+    this.score = newScore;
+    this.$emit("score-changed", this.score);
+  }
+
   public merge(array: TileInfo[]): boolean {
     let previousIndex = 0;
     let changed = false;
@@ -181,6 +184,9 @@ export default class Board extends Vue {
         changed = true;
       } else if (array[previousIndex].number === array[index].number) {
         array[previousIndex].number += 1;
+        this.scoreChanged(
+          this.score + Math.pow(2, array[previousIndex].number)
+        );
         array[index].number = 0;
         changed = true;
         previousIndex++;
