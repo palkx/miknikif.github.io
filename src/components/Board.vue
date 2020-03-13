@@ -4,6 +4,7 @@
       <tile
         class="tile"
         v-for="(tile, index) in tiles"
+        v-bind:ref="'tile-' + index"
         v-bind:key="index"
         v-bind:tile="tile"
         v-bind:color="color"
@@ -66,9 +67,11 @@ export default class Board extends Vue {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const index = Math.floor(Math.random() * max);
-      if (this.tiles[index].number === 0) {
-        this.tiles[index].number = number;
-        this.tiles[index].newNumber = number;
+      const tile = this.tiles[index];
+      if (tile.number === 0) {
+        tile.number = number;
+        tile.newNumber = number;
+        // this.scaleTile(tile);
         break;
       }
     }
@@ -198,6 +201,7 @@ export default class Board extends Vue {
         if (array[previousIndex].newNumber === 0) {
           array[previousIndex].newNumber = array[index].newNumber;
         } else {
+          array[previousIndex].merged = true;
           array[previousIndex].newNumber += 1;
           this.scoreChanged(
             this.score + Math.pow(2, array[previousIndex].newNumber)
@@ -224,10 +228,23 @@ export default class Board extends Vue {
     this.tiles.forEach(tile => {
       tile.number = tile.newNumber;
       tile.moveTo = { row: tile.row, column: tile.column };
+      if (tile.merged) {
+        // this.scaleTile(tile);
+        tile.merged = false;
+      }
     });
-    this.putNumber();
-    if (this.isGameOver()) {
-      this.$emit("game-over");
+    setTimeout(() => {
+      this.putNumber();
+      if (this.isGameOver()) {
+        this.$emit("game-over");
+      }
+    }, 100);
+  }
+
+  scaleTile(tile: TileInfo) {
+    const component = this.$refs["tile-" + tile.index];
+    if (component[0] instanceof Tile) {
+      component[0].scaleAnimation();
     }
   }
 }

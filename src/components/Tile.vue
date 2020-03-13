@@ -5,7 +5,6 @@
       v-bind:style="backColor"
       class="number-container rounded-card"
       :elevation="5"
-      :shaped="true"
     >
       <h1 class="number no_highlighting">{{ showText() }}</h1>
     </v-card>
@@ -66,10 +65,11 @@ export default class Tile extends Vue {
     }
     new TWEEN.Tween({ x: startValue.row, y: startValue.column })
       .to({ x: endValue.row, y: endValue.column }, this.duration)
+      .easing(TWEEN.Easing.Cubic.InOut)
       .onUpdate(value => {
         this.card.style.setProperty(
           "transform",
-          `translate(${(value.y - this.tile.column) * this.moveATile}%, 
+          `translate(${(value.y - this.tile.column) * this.moveATile}%,
           ${(value.x - this.tile.row) * this.moveATile}%)`
         );
       })
@@ -83,12 +83,24 @@ export default class Tile extends Vue {
   }
 
   animate() {
-    if (TWEEN.update()) {
-      requestAnimationFrame(this.animate);
-    }
+    requestAnimationFrame(this.animate);
+    TWEEN.update();
   }
+
   get number(): number {
     return this.tile.number;
+  }
+
+  public scaleAnimation() {
+    // console.log("animation");
+    // new TWEEN.Tween({ scale: 0.5 })
+    //   .to({ scale: 2.0 }, this.duration)
+    //   .onUpdate(value => {
+    //     console.log(value.scale);
+    //     this.card.style.setProperty("transform", `scale(${value.scale})`);
+    //   })
+    //   .start();
+    this.animate();
   }
 
   showText() {
