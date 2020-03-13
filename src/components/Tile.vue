@@ -23,21 +23,17 @@ export default class Tile extends Vue {
   @Prop({ required: true }) readonly color!: string;
 
   MAX = 12;
-  duration = 300;
+  duration = 150;
   moveATile = 111.11;
   private card!: HTMLElement;
 
   mounted() {
-    this.saveCard();
-    if (this.number > 0) {
-      this.card.style.setProperty("display", `flex`);
-    }
-  }
-
-  saveCard() {
     const element = document.getElementById("card-" + this.tile.index);
     if (element != null) {
       this.card = element;
+    }
+    if (this.number > 0) {
+      this.card.style.setProperty("display", `flex`);
     }
   }
 
@@ -47,15 +43,13 @@ export default class Tile extends Vue {
     oldValue: Record<string, number>
   ) {
     if (this.card != undefined) {
-      this.saveCard();
       this.tween(oldValue, newValue);
     }
   }
 
-  @Watch("number", { immediate: true }) numberChanged(newValue: number) {
+  @Watch("number", { immediate: true }) numberChanged() {
     if (this.card != undefined) {
-      this.saveCard();
-      if (newValue === 0) {
+      if (this.number === 0) {
         this.card.style.setProperty("display", `none`);
       } else {
         this.card.style.setProperty("display", `flex`);
@@ -65,8 +59,8 @@ export default class Tile extends Vue {
 
   tween(startValue: Record<string, number>, endValue: Record<string, number>) {
     if (
-      startValue.row === endValue.row &&
-      startValue.column === endValue.column
+      this.tile.row === this.tile.moveTo.row &&
+      this.tile.column === this.tile.moveTo.column
     ) {
       return;
     }
@@ -80,6 +74,8 @@ export default class Tile extends Vue {
         );
       })
       .onComplete(() => {
+        this.tile.moved = false;
+        this.card.style.setProperty("transform", `translate(0)`);
         this.$emit("finish-moving");
       })
       .start();
@@ -112,7 +108,7 @@ export default class Tile extends Vue {
   private realColor(color: number): string {
     color = Math.max(Math.min(255, color), 0);
     let newColor = Math.round(
-      ((color - 255) / this.MAX) * this.number + 0xff
+      Math.max(0, ((color - 255) / this.MAX) * this.number + 0xff)
     ).toString(16);
     if (newColor.length < 2) {
       newColor = "0" + newColor;

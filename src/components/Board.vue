@@ -32,7 +32,7 @@ export default class Board extends Vue {
 
   mounted() {
     this.createBoard(this.size);
-    addEventListener("keyup", _.debounce(this.keyMoniter, 100));
+    addEventListener("keyup", _.throttle(this.keyMoniter, 300));
     const primary = this.$vuetify.theme.themes.light.primary;
     if (primary) {
       this.color = "0x" + primary.toString().slice(-6);
@@ -66,7 +66,7 @@ export default class Board extends Vue {
     // eslint-disable-next-line no-constant-condition
     while (true) {
       const index = Math.floor(Math.random() * max);
-      if (this.tiles[index].number == 0) {
+      if (this.tiles[index].number === 0) {
         this.tiles[index].number = number;
         this.tiles[index].newNumber = number;
         break;
@@ -123,11 +123,7 @@ export default class Board extends Vue {
   }
 
   public moveAndCheck(isRow: boolean, moveToStart: boolean) {
-    if (this.move(isRow, moveToStart)) {
-      if (this.isGameOver()) {
-        this.$emit("game-over");
-      }
-    }
+    this.move(isRow, moveToStart);
   }
 
   public isGameOver(): boolean {
@@ -197,6 +193,7 @@ export default class Board extends Vue {
           row: array[previousIndex].row,
           column: array[previousIndex].column
         };
+        array[index].moved = true;
         changed = true;
         if (array[previousIndex].newNumber === 0) {
           array[previousIndex].newNumber = array[index].newNumber;
@@ -216,7 +213,10 @@ export default class Board extends Vue {
   }
 
   finishMoving() {
-    console.log("finish-moving");
+    const list = this.tiles.filter(tile => tile.moved);
+    if (list.length != 0) {
+      return;
+    }
     this.resetAndPutNew();
   }
 
@@ -225,7 +225,10 @@ export default class Board extends Vue {
       tile.number = tile.newNumber;
       tile.moveTo = { row: tile.row, column: tile.column };
     });
-    // this.putNumber();
+    this.putNumber();
+    if (this.isGameOver()) {
+      this.$emit("game-over");
+    }
   }
 }
 </script>
