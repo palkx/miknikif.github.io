@@ -30,6 +30,7 @@ export default class Board extends Vue {
   private score = 0;
   private tiles: TileInfo[] = [];
   private color = "0x1eba74";
+  private gaming = true;
 
   mounted() {
     this.createBoard(this.size);
@@ -60,6 +61,7 @@ export default class Board extends Vue {
     this.putNumber();
     this.putNumber();
     // this.putALotNumbers();
+    this.gaming = true;
   }
 
   private putNumber(number = 1) {
@@ -84,7 +86,7 @@ export default class Board extends Vue {
   }
 
   public keyMoniter(event: Event) {
-    if (!(event instanceof KeyboardEvent)) return;
+    if (!(event instanceof KeyboardEvent) || !this.gaming) return;
     switch (event.key) {
       case "ArrowLeft":
       case "a":
@@ -107,9 +109,7 @@ export default class Board extends Vue {
     }
   }
 
-  public move(isRow = true, moveToStart = false): boolean {
-    let changed = false;
-
+  public move(isRow = true, moveToStart = false) {
     for (let index = 0; index < this.size; index++) {
       let array = this.tiles.filter(tile => {
         if (isRow) {
@@ -119,10 +119,8 @@ export default class Board extends Vue {
         }
       });
       if (moveToStart) array = array.reverse();
-
-      changed = this.merge(array) || changed;
+      this.merge(array);
     }
-    return changed;
   }
 
   public moveAndCheck(isRow: boolean, moveToStart: boolean) {
@@ -175,9 +173,8 @@ export default class Board extends Vue {
     this.$emit("score-changed", this.score);
   }
 
-  public merge(array: TileInfo[]): boolean {
+  public merge(array: TileInfo[]) {
     let previousIndex = 0;
-    let changed = false;
     for (let index = 1; index < array.length; index++) {
       if (array[index].newNumber === 0) continue;
       while (
@@ -197,7 +194,6 @@ export default class Board extends Vue {
           column: array[previousIndex].column
         };
         array[index].moved = true;
-        changed = true;
         if (array[previousIndex].newNumber === 0) {
           array[previousIndex].newNumber = array[index].newNumber;
         } else {
@@ -213,7 +209,6 @@ export default class Board extends Vue {
         previousIndex++;
       }
     }
-    return changed;
   }
 
   finishMoving() {
@@ -237,6 +232,7 @@ export default class Board extends Vue {
       this.putNumber();
       if (this.isGameOver()) {
         this.$emit("game-over");
+        this.gaming = false;
       }
     }, 100);
   }
