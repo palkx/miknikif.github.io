@@ -5,8 +5,9 @@
         class="tile"
         v-for="(tile, index) in tiles"
         v-bind:key="index"
-        v-bind:number="tile.number"
+        v-bind:tile="tile"
         v-bind:color="color"
+        @finish-moving="finishMoving"
       ></tile>
     </div>
   </div>
@@ -16,6 +17,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import Tile from "@/components/Tile.vue";
 import TileInfo from "@/components/TileInfo.ts";
+import _ from "lodash";
 
 @Component({
   components: {
@@ -28,9 +30,9 @@ export default class Board extends Vue {
   private tiles: TileInfo[] = [];
   private color = "0x1eba74";
 
-  created() {
+  mounted() {
     this.createBoard(this.size);
-    addEventListener("keyup", this.keyMoniter);
+    addEventListener("keyup", _.debounce(this.keyMoniter, 100));
     const primary = this.$vuetify.theme.themes.light.primary;
     if (primary) {
       this.color = "0x" + primary.toString().slice(-6);
@@ -46,7 +48,12 @@ export default class Board extends Vue {
     this.size = size;
     this.tiles.length = 0;
     for (let index = 0; index < this.size * this.size; index++) {
-      const tileInfo = new TileInfo(0, Math.floor(index / size), index % size);
+      const tileInfo = new TileInfo(
+        index,
+        0,
+        Math.floor(index / size),
+        index % size
+      );
       this.tiles.push(tileInfo);
     }
     this.putNumber();
@@ -61,6 +68,7 @@ export default class Board extends Vue {
       const index = Math.floor(Math.random() * max);
       if (this.tiles[index].number == 0) {
         this.tiles[index].number = number;
+        this.tiles[index].newNumber = number;
         break;
       }
     }
@@ -116,7 +124,6 @@ export default class Board extends Vue {
 
   public moveAndCheck(isRow: boolean, moveToStart: boolean) {
     if (this.move(isRow, moveToStart)) {
-      this.putNumber();
       if (this.isGameOver()) {
         this.$emit("game-over");
       }
@@ -173,32 +180,52 @@ export default class Board extends Vue {
     let previousIndex = 0;
     let changed = false;
     for (let index = 1; index < array.length; index++) {
-      if (array[index].number === 0) continue;
+      if (array[index].newNumber === 0) continue;
       while (
-        array[previousIndex].number != 0 &&
-        array[previousIndex].number != array[index].number &&
+        array[previousIndex].newNumber != 0 &&
+        array[previousIndex].newNumber != array[index].newNumber &&
         previousIndex < index - 1
       ) {
         previousIndex++;
       }
 
-      if (array[previousIndex].number === 0) {
-        array[previousIndex].number = array[index].number;
-        array[index].number = 0;
+      if (
+        array[previousIndex].newNumber === 0 ||
+        array[previousIndex].newNumber === array[index].newNumber
+      ) {
+        array[index].moveTo = {
+          row: array[previousIndex].row,
+          column: array[previousIndex].column
+        };
         changed = true;
-      } else if (array[previousIndex].number === array[index].number) {
-        array[previousIndex].number += 1;
-        this.scoreChanged(
-          this.score + Math.pow(2, array[previousIndex].number)
-        );
-        array[index].number = 0;
-        changed = true;
-        previousIndex++;
+        if (array[previousIndex].newNumber === 0) {
+          array[previousIndex].newNumber = array[index].newNumber;
+        } else {
+          array[previousIndex].newNumber += 1;
+          this.scoreChanged(
+            this.score + Math.pow(2, array[previousIndex].newNumber)
+          );
+          previousIndex++;
+        }
+        array[index].newNumber = 0;
       } else {
         previousIndex++;
       }
     }
     return changed;
+  }
+
+  finishMoving() {
+    console.log("finish-moving");
+    this.resetAndPutNew();
+  }
+
+  resetAndPutNew() {
+    this.tiles.forEach(tile => {
+      tile.number = tile.newNumber;
+      tile.moveTo = { row: tile.row, column: tile.column };
+    });
+    // this.putNumber();
   }
 }
 </script>
@@ -229,8 +256,8 @@ export default class Board extends Vue {
 .tile {
   border-radius: 15%;
   display: flex;
-  width: 23%;
-  height: 23%;
+  width: 22.5%;
+  height: 22.5%;
   align-items: center;
   justify-content: center;
   background: white;

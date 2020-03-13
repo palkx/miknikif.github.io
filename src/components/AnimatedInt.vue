@@ -24,6 +24,7 @@ export default class AnimatedInt extends Vue {
 
   tween(startValue: number, endValue: number) {
     new TWEEN.Tween({ tweeningValue: startValue })
+      .to({ tweeningValue: 100000 }, this.duration)
       .to({ tweeningValue: endValue }, this.duration)
       .onUpdate(value => {
         this.tweeningValue = Math.floor(value.tweeningValue);

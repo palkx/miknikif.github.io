@@ -1,10 +1,10 @@
 <template>
   <div>
     <v-card
-      v-if="number != 0"
+      v-bind:id="'card-' + tile.index"
       v-bind:style="backColor"
       class="number-container rounded-card"
-      :elevation="10"
+      :elevation="5"
       :shaped="true"
     >
       <h1 class="number no_highlighting">{{ showText() }}</h1>
@@ -13,14 +13,92 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import TileInfo from "@/components/TileInfo.ts";
+import TWEEN from "@tweenjs/tween.js";
 
 @Component
 export default class Tile extends Vue {
-  @Prop({ required: true }) readonly number!: number;
+  @Prop({ required: true }) readonly tile!: TileInfo;
   @Prop({ required: true }) readonly color!: string;
 
   MAX = 12;
+  duration = 300;
+  moveATile = 111.11;
+  private card!: HTMLElement;
+
+  mounted() {
+    this.saveCard();
+    if (this.number > 0) {
+      this.card.style.setProperty("display", `flex`);
+    }
+  }
+
+  saveCard() {
+    const element = document.getElementById("card-" + this.tile.index);
+    if (element != null) {
+      this.card = element;
+    }
+  }
+
+  @Watch("tile.moveTo", { immediate: true })
+  valueChanged(
+    newValue: Record<string, number>,
+    oldValue: Record<string, number>
+  ) {
+    if (this.card != undefined) {
+      this.saveCard();
+      this.tween(oldValue, newValue);
+    }
+  }
+
+  @Watch("number", { immediate: true }) numberChanged(newValue: number) {
+    if (this.card != undefined) {
+      this.saveCard();
+      if (newValue === 0) {
+        this.card.style.setProperty("display", `none`);
+      } else {
+        this.card.style.setProperty("display", `flex`);
+      }
+    }
+  }
+
+  tween(startValue: Record<string, number>, endValue: Record<string, number>) {
+    if (
+      startValue.row === endValue.row &&
+      startValue.column === endValue.column
+    ) {
+      return;
+    }
+    new TWEEN.Tween({ x: startValue.row, y: startValue.column })
+      .to({ x: endValue.row, y: endValue.column }, this.duration)
+      .onUpdate(value => {
+        this.card.style.setProperty(
+          "transform",
+          `translate(${(value.y - this.tile.column) * this.moveATile}%, 
+          ${(value.x - this.tile.row) * this.moveATile}%)`
+        );
+      })
+      .onComplete(() => {
+        this.$emit("finish-moving");
+      })
+      .start();
+    this.animate();
+  }
+
+  animate() {
+    if (TWEEN.update()) {
+      requestAnimationFrame(this.animate);
+    }
+  }
+  get number(): number {
+    return this.tile.number;
+  }
+
+  showText() {
+    if (this.number === 0) return "";
+    return Math.pow(2, this.number);
+  }
 
   get backColor(): Record<string, string> {
     const colorInt = parseInt(this.color);
@@ -29,11 +107,6 @@ export default class Tile extends Vue {
     const b = this.realColor((colorInt & 0x0000ff) >> 0);
     const combinedColor = "#" + r + g + b;
     return { backgroundColor: combinedColor };
-  }
-
-  showText() {
-    if (this.number === 0) return "";
-    return Math.pow(2, this.number);
   }
 
   private realColor(color: number): string {
@@ -53,10 +126,9 @@ export default class Tile extends Vue {
 .number-container {
   width: 100%;
   height: 100%;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: center;
-  /* transform: translate(20px); */
   border-radius: 15%;
 }
 </style>
