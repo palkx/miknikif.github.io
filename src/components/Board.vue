@@ -6,6 +6,7 @@
         v-for="(tile, index) in tiles"
         v-bind:key="index"
         v-bind:number="tile.number"
+        v-bind:color="color"
       ></tile>
     </div>
   </div>
@@ -25,10 +26,16 @@ export default class Board extends Vue {
   private size = 4;
   private score = 0;
   private tiles: TileInfo[] = [];
+  private color: Record<string, number> = {};
 
   created() {
     this.createBoard(this.size);
     addEventListener("keyup", this.keyMoniter);
+    this.color = {
+      r: 30,
+      g: 186,
+      b: 116
+    };
   }
 
   destroyed() {
@@ -60,7 +67,7 @@ export default class Board extends Vue {
   }
 
   private putALotNumbers() {
-    for (const number of [2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8]) {
+    for (const number of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]) {
       this.putNumber(number);
     }
   }
@@ -197,15 +204,12 @@ export default class Board extends Vue {
 </script>
 
 <style>
-.board .tile {
-  border: 2px solid black;
-}
-
 .container {
   margin: 20px auto;
   width: 60%;
   padding-top: 60%;
   position: relative;
+  background: tomato;
 }
 
 .board {
@@ -218,9 +222,13 @@ export default class Board extends Vue {
   justify-content: center;
   align-content: stretch;
   flex-wrap: wrap;
+  border-color: darkblue;
+  outline: 2px solid tomato;
 }
 
 .tile {
+  border-radius: 15%;
+  border-collapse: collapse;
   display: flex;
   box-sizing: border-box;
   width: 25%;
@@ -229,6 +237,7 @@ export default class Board extends Vue {
   justify-content: center;
   background: lightblue;
   flex-wrap: wrap;
+  border: 2px solid tomato;
 }
 
 @media only screen and (max-width: 500px) {
