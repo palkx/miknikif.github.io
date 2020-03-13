@@ -1,13 +1,12 @@
 <template>
   <div>
-    <v-card
+    <div
       v-bind:id="'card-' + tile.index"
       v-bind:style="backColor"
-      class="number-container rounded-card"
-      :elevation="5"
+      class="number-container rounded-card elevation-5"
     >
       <h1 class="number no_highlighting">{{ showText() }}</h1>
-    </v-card>
+    </div>
   </div>
 </template>
 
