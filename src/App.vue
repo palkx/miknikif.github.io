@@ -32,16 +32,20 @@ export default Vue.extend({
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: var(--v-black-base);
 }
 #nav {
   padding: 30px;
   a {
     font-weight: bold;
-    color: #2c3e50;
+    color: var(--v-black-base);
     &.router-link-exact-active {
-      color: #42b983;
+      color: var(--v-primary-base);
     }
   }
+}
+
+.no_highlighting {
+  user-select: none;
 }
 </style>

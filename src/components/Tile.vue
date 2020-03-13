@@ -1,6 +1,6 @@
 <template>
   <div class="tile" v-bind:style="backColor">
-    <h1 class="number">{{ showText() }}</h1>
+    <h1 class="number no_highlighting">{{ showText() }}</h1>
   </div>
 </template>
 
@@ -10,14 +10,15 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 @Component
 export default class Tile extends Vue {
   @Prop({ required: true }) readonly number!: number;
-  @Prop({ required: true }) readonly color!: Record<string, number>;
+  @Prop({ required: true }) readonly color!: string;
 
   MAX = 12;
 
   get backColor(): Record<string, string> {
-    const r = this.realColor(this.color.r);
-    const g = this.realColor(this.color.g);
-    const b = this.realColor(this.color.b);
+    const colorInt = parseInt(this.color);
+    const r = this.realColor((colorInt & 0xff0000) >> 16);
+    const g = this.realColor((colorInt & 0x00ff00) >> 8);
+    const b = this.realColor((colorInt & 0x0000ff) >> 0);
     const combinedColor = "#" + r + g + b;
     return { backgroundColor: combinedColor };
   }

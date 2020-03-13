@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="board">
+    <transition-group tag="div" class="board" name="list">
       <tile
         class="tile"
         v-for="(tile, index) in tiles"
@@ -8,7 +8,7 @@
         v-bind:number="tile.number"
         v-bind:color="color"
       ></tile>
-    </div>
+    </transition-group>
   </div>
 </template>
 
@@ -26,16 +26,15 @@ export default class Board extends Vue {
   private size = 4;
   private score = 0;
   private tiles: TileInfo[] = [];
-  private color: Record<string, number> = {};
+  private color = "0x1eba74";
 
   created() {
     this.createBoard(this.size);
     addEventListener("keyup", this.keyMoniter);
-    this.color = {
-      r: 30,
-      g: 186,
-      b: 116
-    };
+    const primary = this.$vuetify.theme.themes.light.primary;
+    if (primary) {
+      this.color = "0x" + primary.toString().slice(-6);
+    }
   }
 
   destroyed() {
