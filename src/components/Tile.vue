@@ -82,7 +82,7 @@ export default class Tile extends Vue {
   }
 
   animate() {
-    requestAnimationFrame(() => this.animate());
+    requestAnimationFrame(this.animate);
     TWEEN.update(20);
   }
 

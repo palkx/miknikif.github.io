@@ -71,7 +71,7 @@ export default class Board extends Vue {
       if (tile.number === 0) {
         tile.number = number;
         tile.newNumber = number;
-        // this.scaleTile(tile);
+        this.scaleTile(tile);
         break;
       }
     }
@@ -243,7 +243,7 @@ export default class Board extends Vue {
 
   scaleTile(tile: TileInfo) {
     const component = this.$refs["tile-" + tile.index];
-    if (component[0] instanceof Tile) {
+    if (component && component[0] instanceof Tile) {
       component[0].scaleAnimation();
     }
   }
