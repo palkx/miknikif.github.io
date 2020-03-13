@@ -208,7 +208,6 @@ export default class Board extends Vue {
   width: 60%;
   padding-top: 60%;
   position: relative;
-  background: tomato;
 }
 
 .board {
@@ -218,11 +217,12 @@ export default class Board extends Vue {
   bottom: 0;
   right: 0;
   display: flex;
-  justify-content: center;
-  align-content: stretch;
+  justify-content: space-between;
+  align-content: space-between;
   flex-wrap: wrap;
-  border-color: darkblue;
-  outline: 2px solid tomato;
+  border: 5px solid tomato;
+  border-radius: 3%;
+  background: tomato;
 }
 
 .tile {
@@ -230,13 +230,13 @@ export default class Board extends Vue {
   border-collapse: collapse;
   display: flex;
   box-sizing: border-box;
-  width: 25%;
-  height: 25%;
+  width: 24%;
+  height: 24%;
   align-items: center;
   justify-content: center;
   background: lightblue;
   flex-wrap: wrap;
-  border: 2px solid tomato;
+  box-sizing: content-box;
 }
 
 @media only screen and (max-width: 500px) {
