@@ -1,6 +1,14 @@
 <template>
-  <div class="tile" v-bind:style="backColor">
-    <h1 class="number no_highlighting">{{ showText() }}</h1>
+  <div>
+    <v-card
+      v-if="number != 0"
+      v-bind:style="backColor"
+      class="number-container rounded-card"
+      :elevation="10"
+      :shaped="true"
+    >
+      <h1 class="number no_highlighting">{{ showText() }}</h1>
+    </v-card>
   </div>
 </template>
 
@@ -40,3 +48,15 @@ export default class Tile extends Vue {
   }
 }
 </script>
+
+<style>
+.number-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* transform: translate(20px); */
+  border-radius: 15%;
+}
+</style>

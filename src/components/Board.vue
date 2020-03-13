@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <transition-group tag="div" class="board" name="list">
+    <div class="board">
       <tile
         class="tile"
         v-for="(tile, index) in tiles"
@@ -8,7 +8,7 @@
         v-bind:number="tile.number"
         v-bind:color="color"
       ></tile>
-    </transition-group>
+    </div>
   </div>
 </template>
 
@@ -49,6 +49,7 @@ export default class Board extends Vue {
       const tileInfo = new TileInfo(0, Math.floor(index / size), index % size);
       this.tiles.push(tileInfo);
     }
+    this.putNumber();
     this.putNumber();
     // this.putALotNumbers();
   }
@@ -217,8 +218,8 @@ export default class Board extends Vue {
   bottom: 0;
   right: 0;
   display: flex;
-  justify-content: space-between;
-  align-content: space-between;
+  justify-content: space-around;
+  align-content: space-around;
   flex-wrap: wrap;
   border: 5px solid tomato;
   border-radius: 3%;
@@ -227,16 +228,12 @@ export default class Board extends Vue {
 
 .tile {
   border-radius: 15%;
-  border-collapse: collapse;
   display: flex;
-  box-sizing: border-box;
-  width: 24%;
-  height: 24%;
+  width: 23%;
+  height: 23%;
   align-items: center;
   justify-content: center;
-  background: lightblue;
-  flex-wrap: wrap;
-  box-sizing: content-box;
+  background: white;
 }
 
 @media only screen and (max-width: 500px) {
@@ -254,9 +251,5 @@ export default class Board extends Vue {
     height: 400px;
     padding-top: 0;
   }
-}
-
-.flip-list-move {
-  transition: transform 1s;
 }
 </style>
