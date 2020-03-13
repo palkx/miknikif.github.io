@@ -229,7 +229,7 @@ export default class Board extends Vue {
       tile.number = tile.newNumber;
       tile.moveTo = { row: tile.row, column: tile.column };
       if (tile.merged) {
-        // this.scaleTile(tile);
+        this.scaleTile(tile);
         tile.merged = false;
       }
     });
