@@ -24,6 +24,8 @@ export default class Tile extends Vue {
   MAX = 12;
   moveATile = 111.11;
   private card!: HTMLElement;
+  private tweenTranslate = new TWEEN.Group();
+  private tweenScale = new TWEEN.Group();
 
   mounted() {
     const element = document.getElementById("card-" + this.tile.index);
@@ -62,7 +64,10 @@ export default class Tile extends Vue {
     ) {
       return;
     }
-    new TWEEN.Tween({ x: startValue.row, y: startValue.column })
+    new TWEEN.Tween(
+      { x: startValue.row, y: startValue.column },
+      this.tweenTranslate
+    )
       .to({ x: endValue.row, y: endValue.column }, 200)
       .easing(TWEEN.Easing.Cubic.InOut)
       .onUpdate(value => {
@@ -78,12 +83,13 @@ export default class Tile extends Vue {
         this.$emit("finish-moving");
       })
       .start();
-    this.animate();
+    this.translateAnimate();
   }
 
-  animate() {
-    requestAnimationFrame(this.animate);
-    TWEEN.update(20);
+  translateAnimate() {
+    if (this.tweenTranslate.update()) {
+      requestAnimationFrame(this.translateAnimate);
+    }
   }
 
   get number(): number {
@@ -91,14 +97,20 @@ export default class Tile extends Vue {
   }
 
   public scaleAnimation() {
-    new TWEEN.Tween({ scale: 0.8 })
+    new TWEEN.Tween({ scale: 0.8 }, this.tweenScale)
       .to({ scale: 1.0 }, 300)
       .easing(TWEEN.Easing.Back.Out)
       .onUpdate(value => {
         this.card.style.setProperty("transform", `scale(${value.scale})`);
       })
       .start();
-    this.animate();
+    this.scaleAnimate();
+  }
+
+  scaleAnimate() {
+    if (this.tweenScale.update()) {
+      requestAnimationFrame(this.scaleAnimate);
+    }
   }
 
   showText() {
