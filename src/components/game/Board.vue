@@ -9,13 +9,14 @@
         v-bind:tile="tile"
         v-bind:color="tileColor"
         @finish-moving="finishMoving"
+        v-bind:style="sizeStyle"
       ></tile>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Tile from "@/components/game/Tile.vue";
 import TileInfo from "@/components/game/TileInfo.ts";
 import _ from "lodash";
@@ -27,7 +28,7 @@ import _ from "lodash";
 })
 export default class Board extends Vue {
   @Prop({ default: "0x1eba74" }) tileColor!: string;
-  private size = 4;
+  @Prop({ default: 4 }) size!: number;
   private score = 0;
   private tiles: TileInfo[] = [];
   private gaming = true;
@@ -62,6 +63,16 @@ export default class Board extends Vue {
     this.putNumber();
     // this.putALotNumbers();
     this.gaming = true;
+  }
+
+  @Watch("size")
+  sizeChanged() {
+    this.createBoard(this.size);
+  }
+
+  get sizeStyle(): Record<string, string> {
+    const percent = 90 / this.size;
+    return { width: percent + "%", height: percent + "%" };
   }
 
   private putNumber(number = 1) {
@@ -273,7 +284,9 @@ export default class Board extends Vue {
   border-radius: 15%;
   display: flex;
   width: 22.5%;
+  width: 15%;
   height: 22.5%;
+  height: 15%;
   align-items: center;
   justify-content: center;
   background: var(--v-white-base);
