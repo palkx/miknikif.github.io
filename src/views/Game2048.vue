@@ -63,11 +63,12 @@
         <v-btn rounded color="primary" dark class="ma-2" @click="move('a')">
           ⇦
         </v-btn>
-        <v-btn rounded color="primary" dark class="ma-2" @click="move('s')">
-          ⇩
-        </v-btn>
         <v-btn rounded color="primary" dark class="ma-2" @click="move('d')">
           ⇨
+        </v-btn>
+        <br />
+        <v-btn rounded color="primary" dark class="ma-2" @click="move('s')">
+          ⇩
         </v-btn>
       </div>
     </transition>
