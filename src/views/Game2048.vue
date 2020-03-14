@@ -54,8 +54,9 @@
       v-bind:tile-color="color"
       v-bind:size="size"
     />
-    <transition name="fade">
-      <div class="arrow-controls" v-if="gaming">
+
+    <transition name="fade" mode="out-in">
+      <div class="arrow-controls" v-if="gaming" key="game-control">
         <v-btn rounded color="primary" dark class="ma-2" @click="move('w')">
           ⇧
         </v-btn>
@@ -71,10 +72,7 @@
           ⇩
         </v-btn>
       </div>
-    </transition>
-
-    <transition name="fade">
-      <div class="restart" v-if="!gaming">
+      <div class="restart" v-else key="restart">
         <h2>Game Over!</h2>
         <v-btn @click="restart" rounded color="primary" dark class="ma-2">
           Restart
