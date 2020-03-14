@@ -2,13 +2,33 @@
   <div class="game2048">
     <h1>A simple 2048.</h1>
     <h2>Score: <animated-int v-bind:value="score"></animated-int></h2>
-    <board ref="board" @game-over="gameOver" @score-changed="showScore" />
+    <board
+      ref="board"
+      @game-over="gameOver"
+      @score-changed="showScore"
+      v-bind:tile-color="color"
+    />
     <transition name="fade">
       <div class="restart" v-if="!gaming">
         <h2>Game Over!</h2>
-        <v-btn @click="restart">
-          <span class="mr-2">Restart</span>
+        <v-btn @click="restart" rounded color="primary" dark class="ma-2">
+          Restart
         </v-btn>
+        <br />
+        <v-menu transition="scroll-y-transition">
+          <template v-slot:activator="{ on }">
+            <v-btn rounded outlined color="primary" dark class="ma-2" v-on="on"
+              >Change Color</v-btn
+            >
+          </template>
+          <v-color-picker
+            value="#1eba74"
+            @update:color="changeColor"
+            :hide-mode-switch="true"
+            :hide-canvas="true"
+            :hide-inputs="true"
+          ></v-color-picker>
+        </v-menu>
       </div>
     </transition>
   </div>
@@ -28,6 +48,7 @@ import AnimatedInt from "@/components/AnimatedInt.vue";
 export default class Game2048 extends Vue {
   score = 0;
   gaming = true;
+  color = "0x1eba74";
 
   private restart() {
     if (this.$refs.board instanceof Board) {
@@ -42,6 +63,10 @@ export default class Game2048 extends Vue {
 
   private showScore(newScore: number) {
     this.score = newScore;
+  }
+
+  changeColor(v) {
+    this.color = "0x" + v.hex.slice(-6);
   }
 }
 </script>

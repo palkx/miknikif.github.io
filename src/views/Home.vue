@@ -4,11 +4,23 @@
     <p>Nothing here.</p>
     <br />
     <v-btn
+      rounded
+      color="primary"
+      dark
+      class="ma-2"
       href="https://github.com/nestorm001/nestorm001.github.io"
       target="_blank"
+      >github repo</v-btn
     >
-      <span class="mr-2">github repo</span>
-    </v-btn>
+    <v-btn
+      outlined
+      rounded
+      class="ma-2"
+      color="primary"
+      href="https://github.com/nestorm001/"
+      target="_blank"
+      >my github</v-btn
+    >
   </div>
 </template>
 

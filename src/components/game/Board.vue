@@ -7,7 +7,7 @@
         v-bind:ref="'tile-' + index"
         v-bind:key="index"
         v-bind:tile="tile"
-        v-bind:color="color"
+        v-bind:color="tileColor"
         @finish-moving="finishMoving"
       ></tile>
     </div>
@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Prop } from "vue-property-decorator";
 import Tile from "@/components/game/Tile.vue";
 import TileInfo from "@/components/game/TileInfo.ts";
 import _ from "lodash";
@@ -26,10 +26,10 @@ import _ from "lodash";
   }
 })
 export default class Board extends Vue {
+  @Prop({ default: "0x1eba74" }) tileColor!: string;
   private size = 4;
   private score = 0;
   private tiles: TileInfo[] = [];
-  private color = "0x1eba74";
   private gaming = true;
 
   mounted() {
@@ -37,7 +37,7 @@ export default class Board extends Vue {
     addEventListener("keyup", _.throttle(this.keyMoniter, 300));
     const primary = this.$vuetify.theme.themes.light.primary;
     if (primary) {
-      this.color = "0x" + primary.toString().slice(-6);
+      this.tileColor = "0x" + primary.toString().slice(-6);
     }
   }
 
