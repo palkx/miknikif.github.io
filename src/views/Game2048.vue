@@ -116,7 +116,11 @@ export default class Game2048 extends Vue {
   }
 
   changeSize(v) {
+    if (this.size === v) {
+      return;
+    }
     this.size = v;
+    this.gaming = true;
   }
 
   changeColor(v) {
