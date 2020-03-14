@@ -40,6 +40,24 @@
       v-bind:size="size"
     />
     <transition name="fade">
+      <div class="arrow-controls" v-if="gaming">
+        <v-btn rounded color="primary" dark class="ma-2" @click="move('w')">
+          ⇧
+        </v-btn>
+        <br />
+        <v-btn rounded color="primary" dark class="ma-2" @click="move('a')">
+          ⇦
+        </v-btn>
+        <v-btn rounded color="primary" dark class="ma-2" @click="move('s')">
+          ⇩
+        </v-btn>
+        <v-btn rounded color="primary" dark class="ma-2" @click="move('d')">
+          ⇨
+        </v-btn>
+      </div>
+    </transition>
+
+    <transition name="fade">
       <div class="restart" v-if="!gaming">
         <h2>Game Over!</h2>
         <v-btn @click="restart" rounded color="primary" dark class="ma-2">
@@ -89,6 +107,12 @@ export default class Game2048 extends Vue {
   changeColor(v) {
     this.color = "0x" + v.hex.slice(-6);
   }
+
+  move(key: string) {
+    if (this.$refs.board instanceof Board) {
+      this.$refs.board.handleKey(key);
+    }
+  }
 }
 </script>
 
@@ -101,5 +125,11 @@ export default class Game2048 extends Vue {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+
+@media only screen and (min-width: 600px) {
+  .arrow-controls {
+    display: none;
+  }
 }
 </style>

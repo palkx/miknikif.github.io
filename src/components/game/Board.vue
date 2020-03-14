@@ -96,9 +96,8 @@ export default class Board extends Vue {
     }
   }
 
-  public keyMoniter(event: Event) {
-    if (!(event instanceof KeyboardEvent) || !this.gaming) return;
-    switch (event.key) {
+  handleKey(key: string) {
+    switch (key) {
       case "ArrowLeft":
       case "a":
         this.left();
@@ -118,6 +117,10 @@ export default class Board extends Vue {
       default:
         break;
     }
+  }
+  public keyMoniter(event: Event) {
+    if (!(event instanceof KeyboardEvent) || !this.gaming) return;
+    this.handleKey(event.key);
   }
 
   public move(isRow = true, moveToStart = false) {
