@@ -16,7 +16,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Board from "@/components/Board.vue";
+import Board from "@/components/game/Board.vue";
 import AnimatedInt from "@/components/AnimatedInt.vue";
 
 @Component({

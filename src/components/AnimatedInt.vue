@@ -11,6 +11,7 @@ export default class AnimatedInt extends Vue {
   @Prop({ required: true }) value!: number;
   @Prop({ default: 300 }) duration!: number;
 
+  private tweenGroup = new TWEEN.Group();
   tweeningValue = 0;
 
   @Watch("value", { immediate: true })
@@ -23,7 +24,7 @@ export default class AnimatedInt extends Vue {
   }
 
   tween(startValue: number, endValue: number) {
-    new TWEEN.Tween({ tweeningValue: startValue })
+    new TWEEN.Tween({ tweeningValue: startValue }, this.tweenGroup)
       .to({ tweeningValue: endValue }, this.duration)
       .onUpdate(value => {
         this.tweeningValue = Math.floor(value.tweeningValue);
@@ -33,7 +34,7 @@ export default class AnimatedInt extends Vue {
   }
 
   animate() {
-    if (TWEEN.update()) {
+    if (this.tweenGroup.update()) {
       requestAnimationFrame(this.animate);
     }
   }

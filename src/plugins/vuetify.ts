@@ -9,7 +9,8 @@ export default new Vuetify({
       light: {
         primary: "#1eba74",
         accent: colors.orange.lighten2,
-        black: "#000000"
+        black: "#000000",
+        white: "#ffffff",
       }
     },
     options: {

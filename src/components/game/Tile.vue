@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-import TileInfo from "@/components/TileInfo.ts";
+import TileInfo from "@/components/game/TileInfo.ts";
 import TWEEN from "@tweenjs/tween.js";
 
 @Component

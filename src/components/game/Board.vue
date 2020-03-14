@@ -16,8 +16,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Tile from "@/components/Tile.vue";
-import TileInfo from "@/components/TileInfo.ts";
+import Tile from "@/components/game/Tile.vue";
+import TileInfo from "@/components/game/TileInfo.ts";
 import _ from "lodash";
 
 @Component({
@@ -264,9 +264,9 @@ export default class Board extends Vue {
   justify-content: space-around;
   align-content: space-around;
   flex-wrap: wrap;
-  border: 5px solid tomato;
+  border: 5px solid var(--v-accent-base);
   border-radius: 3%;
-  background: tomato;
+  background: var(--v-accent-base);
 }
 
 .tile {
@@ -276,7 +276,7 @@ export default class Board extends Vue {
   height: 22.5%;
   align-items: center;
   justify-content: center;
-  background: white;
+  background: var(--v-white-base);
 }
 
 @media only screen and (max-width: 500px) {
