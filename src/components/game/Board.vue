@@ -19,7 +19,6 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Tile from "@/components/game/Tile.vue";
 import TileInfo from "@/components/game/TileInfo.ts";
-import _ from "lodash";
 
 @Component({
   components: {
@@ -32,10 +31,11 @@ export default class Board extends Vue {
   private score = 0;
   private tiles: TileInfo[] = [];
   private gaming = true;
+  private animating = false;
 
   mounted() {
     this.createBoard(this.size);
-    addEventListener("keyup", _.throttle(this.keyMoniter, 300));
+    addEventListener("keyup", this.keyMoniter);
     const primary = this.$vuetify.theme.themes.light.primary;
     if (primary) {
       this.tileColor = "0x" + primary.toString().slice(-6);
@@ -97,6 +97,10 @@ export default class Board extends Vue {
   }
 
   handleKey(key: string) {
+    if (this.animating) {
+      return;
+    }
+
     switch (key) {
       case "ArrowLeft":
       case "a":
@@ -123,7 +127,8 @@ export default class Board extends Vue {
     this.handleKey(event.key);
   }
 
-  public move(isRow = true, moveToStart = false) {
+  public move(isRow = true, moveToStart = false): boolean {
+    let changed = false;
     for (let index = 0; index < this.size; index++) {
       let array = this.tiles.filter(tile => {
         if (isRow) {
@@ -133,12 +138,15 @@ export default class Board extends Vue {
         }
       });
       if (moveToStart) array = array.reverse();
-      this.merge(array);
+      changed = this.merge(array) || changed;
     }
+    return changed;
   }
 
   public moveAndCheck(isRow: boolean, moveToStart: boolean) {
-    this.move(isRow, moveToStart);
+    if (this.move(isRow, moveToStart)) {
+      this.animating = true;
+    }
   }
 
   public isGameOver(): boolean {
@@ -187,8 +195,9 @@ export default class Board extends Vue {
     this.$emit("score-changed", this.score);
   }
 
-  public merge(array: TileInfo[]) {
+  public merge(array: TileInfo[]): boolean {
     let previousIndex = 0;
+    let changed = false;
     for (let index = 1; index < array.length; index++) {
       if (array[index].newNumber === 0) continue;
       while (
@@ -208,6 +217,7 @@ export default class Board extends Vue {
           column: array[previousIndex].column
         };
         array[index].moved = true;
+        changed = true;
         if (array[previousIndex].newNumber === 0) {
           array[previousIndex].newNumber = array[index].newNumber;
         } else {
@@ -223,6 +233,7 @@ export default class Board extends Vue {
         previousIndex++;
       }
     }
+    return changed;
   }
 
   finishMoving() {
@@ -230,6 +241,7 @@ export default class Board extends Vue {
     if (list.length != 0) {
       return;
     }
+    this.animating = false;
     this.resetAndPutNew();
   }
 
