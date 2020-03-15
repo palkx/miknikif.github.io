@@ -100,6 +100,7 @@ export default class Board extends Vue {
     if (this.animating) {
       return;
     }
+    this.animating = true;
 
     switch (key) {
       case "ArrowLeft":
@@ -119,6 +120,7 @@ export default class Board extends Vue {
         this.down();
         break;
       default:
+        this.animating = false;
         break;
     }
   }
@@ -144,9 +146,7 @@ export default class Board extends Vue {
   }
 
   public moveAndCheck(isRow: boolean, moveToStart: boolean) {
-    if (this.move(isRow, moveToStart)) {
-      this.animating = true;
-    }
+    this.animating = this.move(isRow, moveToStart);
   }
 
   public isGameOver(): boolean {
