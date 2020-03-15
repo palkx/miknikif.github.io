@@ -241,7 +241,6 @@ export default class Board extends Vue {
     if (list.length != 0) {
       return;
     }
-    this.animating = false;
     this.resetAndPutNew();
   }
 
@@ -256,6 +255,7 @@ export default class Board extends Vue {
     });
     setTimeout(() => {
       this.putNumber();
+      this.animating = false;
       if (this.isGameOver()) {
         this.$emit("game-over");
         this.gaming = false;
