@@ -8,6 +8,7 @@
         v-bind:key="index"
         v-bind:tile="tile"
         v-bind:color="tileColor"
+        v-bind:font-scale="size"
         @finish-moving="finishMoving"
         v-bind:style="sizeStyle"
       ></tile>

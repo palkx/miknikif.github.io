@@ -5,7 +5,9 @@
       v-bind:style="backColor"
       class="number-container rounded-card elevation-5"
     >
-      <h1 class="number no_highlighting">{{ showText() }}</h1>
+      <span v-bind:style="fontSize" class="number no_highlighting">{{
+        showText()
+      }}</span>
     </div>
   </div>
 </template>
@@ -19,6 +21,7 @@ import TWEEN from "@tweenjs/tween.js";
 export default class Tile extends Vue {
   @Prop({ required: true }) readonly tile!: TileInfo;
   @Prop({ required: true }) readonly color!: string;
+  @Prop({ required: true }) readonly fontScale!: number;
 
   MAX = 12;
   moveATile = 111.11;
@@ -124,6 +127,11 @@ export default class Tile extends Vue {
     const b = this.realColor((colorInt & 0x0000ff) >> 0);
     const combinedColor = "#" + r + g + b;
     return { backgroundColor: combinedColor };
+  }
+
+  get fontSize(): Record<string, string> {
+    const scale = Math.round(800 / this.fontScale);
+    return { fontSize: `${scale}%`, fontWeight: "bold" };
   }
 
   private realColor(color: number): string {
