@@ -246,14 +246,8 @@ export default class Board extends Vue {
   }
 
   resetAndPutNew() {
-    this.tiles.forEach(tile => {
-      tile.number = tile.newNumber;
-      tile.moveTo = { row: tile.row, column: tile.column };
-      if (tile.merged) {
-        this.scaleTile(tile);
-        tile.merged = false;
-      }
-    });
+    this.refreshTile();
+
     setTimeout(() => {
       this.putNumber();
       this.animating = false;
@@ -262,6 +256,21 @@ export default class Board extends Vue {
         this.gaming = false;
       }
     }, 100);
+  }
+
+  refreshTile() {
+    this.tiles.forEach(tile => {
+      tile.number = tile.newNumber;
+      tile.moveTo = { row: tile.row, column: tile.column };
+      const component = this.$refs["tile-" + tile.index];
+      if (component && component[0] instanceof Tile) {
+        component[0].resetTransform();
+        if (tile.merged) {
+          component[0].scaleAnimation();
+          tile.merged = false;
+        }
+      }
+    });
   }
 
   scaleTile(tile: TileInfo) {

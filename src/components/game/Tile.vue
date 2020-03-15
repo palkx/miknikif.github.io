@@ -81,11 +81,14 @@ export default class Tile extends Vue {
       })
       .onComplete(() => {
         this.tile.moved = false;
-        this.card.style.setProperty("transform", `translate(0)`);
         this.$emit("finish-moving");
       })
       .start();
     this.translateAnimate();
+  }
+
+  resetTransform() {
+    this.card.style.setProperty("transform", `translate(0)`);
   }
 
   translateAnimate() {
