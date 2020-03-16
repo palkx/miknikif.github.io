@@ -130,6 +130,7 @@ export default class Game2048 extends Vue {
 
   mounted() {
     addEventListener("keyup", this.keyMoniter);
+    this.closeMenuIfClickOutside();
     const board = this.$refs.board;
     if (board instanceof Board) {
       if (this.hasSaveData()) {
@@ -147,6 +148,39 @@ export default class Game2048 extends Vue {
         board.createBoard(this.size);
       }
     }
+  }
+
+  containsElement(id: string, event: MouseEvent): boolean {
+    let target = event.target;
+    const element = document.getElementById(id);
+    do {
+      if (target == element) {
+        return true;
+      }
+      if (target instanceof HTMLElement) {
+        target = target.parentNode;
+      } else {
+        break;
+      }
+    } while (target);
+    return false;
+  }
+
+  closeMenuIfClickOutside() {
+    document.addEventListener("mouseup", event => {
+      // check not open menu button
+      if (this.containsElement("open-menu", event)) {
+        return;
+      }
+      // check is menu opening
+      if (!this.showOptions) {
+        return;
+      }
+      // close menu if click outside
+      if (!this.containsElement("menu", event)) {
+        this.showOptions = false;
+      }
+    });
   }
 
   destroyed() {
