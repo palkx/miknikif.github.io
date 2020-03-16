@@ -2,6 +2,7 @@
   <div class="game2048">
     <p class="d-flex justify-center align-center">
       <v-btn
+        id="open-menu"
         icon
         color="primary"
         @click="showOptions = !showOptions"
@@ -13,7 +14,7 @@
       ></span>
     </p>
     <v-expand-transition>
-      <div v-if="showOptions" class="settings-content">
+      <div v-if="showOptions" class="settings-content" id="menu">
         <v-btn
           rounded
           outlined
@@ -28,7 +29,7 @@
           <v-color-picker
             class="color-picker"
             v-if="showColorSetting"
-            value="#1eba74"
+            :value="hexColor()"
             flat
             @update:color="changeColor"
             :hide-mode-switch="true"
@@ -77,7 +78,6 @@
       @game-over="gameOver"
       @score-changed="showScore"
       v-bind:tile-color="color"
-      v-bind:size="size"
     />
 
     <transition name="fade" mode="out-in">
@@ -190,6 +190,10 @@ export default class Game2048 extends Vue {
 
   changeColor(v) {
     this.color = "0x" + v.hex.slice(-6);
+  }
+
+  hexColor(): string {
+    return "#" + this.color.slice(-6);
   }
 
   move(key: string) {

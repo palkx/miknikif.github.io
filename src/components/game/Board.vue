@@ -28,7 +28,7 @@ import TileInfo from "@/components/game/TileInfo.ts";
 })
 export default class Board extends Vue {
   @Prop({ default: "0x1eba74" }) tileColor!: string;
-  @Prop({ default: 4 }) size!: number;
+  private size = 4;
   private score = 0;
   private tiles: TileInfo[] = [];
   private gaming = true;
