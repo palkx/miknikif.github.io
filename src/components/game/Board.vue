@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from "vue-property-decorator";
+import { Component, Vue, Prop } from "vue-property-decorator";
 import Tile from "@/components/game/Tile.vue";
 import TileInfo from "@/components/game/TileInfo.ts";
 
