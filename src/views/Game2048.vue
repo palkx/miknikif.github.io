@@ -12,43 +12,42 @@
         Score: <animated-int v-bind:value="score"></animated-int
       ></span>
     </p>
-    <transition name="fade">
+    <v-expand-transition>
       <div v-if="showOptions" class="settings-content">
-        <v-menu transition="scroll-y-transition">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              rounded
-              outlined
-              color="primary"
-              dark
-              class="ma-2 settings-button"
-              v-on="on"
-            >
-              Change Color
-            </v-btn>
-          </template>
+        <v-btn
+          rounded
+          outlined
+          color="primary"
+          dark
+          class="ma-2 settings-button"
+          @click="showColorSetting = !showColorSetting"
+        >
+          Change Color
+        </v-btn>
+        <v-expand-transition>
           <v-color-picker
+            class="color-picker"
+            v-if="showColorSetting"
             value="#1eba74"
+            flat
             @update:color="changeColor"
             :hide-mode-switch="true"
             :hide-canvas="true"
             :hide-inputs="true"
           ></v-color-picker>
-        </v-menu>
-        <v-menu transition="slide-y-transition">
-          <template v-slot:activator="{ on }">
-            <v-btn
-              rounded
-              outlined
-              color="primary"
-              dark
-              class="ma-2 settings-button"
-              v-on="on"
-            >
-              Change Size
-            </v-btn>
-          </template>
-          <v-list>
+        </v-expand-transition>
+        <v-btn
+          rounded
+          outlined
+          color="primary"
+          dark
+          class="ma-2 settings-button"
+          @click="showSizeSetting = !showSizeSetting"
+        >
+          Change Size
+        </v-btn>
+        <v-expand-transition>
+          <v-list v-if="showSizeSetting">
             <v-list-item
               v-for="n in [3, 4, 5, 6]"
               :key="n"
@@ -58,7 +57,7 @@
               <v-list-item-title v-text="n + ' x ' + n"></v-list-item-title>
             </v-list-item>
           </v-list>
-        </v-menu>
+        </v-expand-transition>
         <br />
         <v-btn
           rounded
@@ -71,7 +70,8 @@
           Restart
         </v-btn>
       </div>
-    </transition>
+    </v-expand-transition>
+
     <board
       ref="board"
       @game-over="gameOver"
@@ -125,6 +125,8 @@ export default class Game2048 extends Vue {
   color = "0x1eba74";
   size = 4;
   showOptions = false;
+  showColorSetting = false;
+  showSizeSetting = false;
 
   mounted() {
     const board = this.$refs.board;
@@ -207,7 +209,8 @@ export default class Game2048 extends Vue {
   position: absolute;
   margin: auto;
   width: auto;
-  max-width: 400px;
+  padding: 10px 0;
+  max-width: 350px;
   min-width: 150px;
   left: 5%;
   right: 5%;
@@ -220,5 +223,10 @@ export default class Game2048 extends Vue {
 .settings-button {
   width: 80%;
   margin: 0 10%;
+}
+
+.color-picker {
+  border: none;
+  margin: 0 auto;
 }
 </style>
