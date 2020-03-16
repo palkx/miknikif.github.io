@@ -35,7 +35,6 @@ export default class Board extends Vue {
   private animating = false;
 
   mounted() {
-    this.createBoard(this.size);
     addEventListener("keyup", this.keyMoniter);
     const primary = this.$vuetify.theme.themes.light.primary;
     if (primary) {
@@ -43,11 +42,30 @@ export default class Board extends Vue {
     }
   }
 
+  initGame(tiles: TileInfo[], score: number, size: number) {
+    this.tiles = tiles;
+    this.score = score;
+    this.size = size;
+  }
+
+  saveData() {
+    localStorage.score = this.score;
+    localStorage.size = this.size;
+    localStorage.tiles = JSON.stringify(this.tiles);
+  }
+
+  clearData() {
+    localStorage.removeItem("tiles");
+    localStorage.removeItem("score");
+    localStorage.removeItem("size");
+  }
+
   destroyed() {
     removeEventListener("keyup", this.keyMoniter);
   }
 
   public createBoard(size: number = this.size) {
+    this.clearData();
     this.scoreChanged(0);
     this.size = size;
     this.tiles.length = 0;
@@ -66,11 +84,6 @@ export default class Board extends Vue {
     this.gaming = true;
   }
 
-  @Watch("size")
-  sizeChanged() {
-    this.createBoard(this.size);
-  }
-
   get sizeStyle(): Record<string, string> {
     const percent = 90 / this.size;
     return { width: percent + "%", height: percent + "%" };
@@ -85,6 +98,7 @@ export default class Board extends Vue {
       if (tile.number === 0) {
         tile.number = number;
         tile.newNumber = number;
+        this.saveData();
         this.scaleTile(tile);
         break;
       }
@@ -249,7 +263,8 @@ export default class Board extends Vue {
     this.refreshTile();
 
     setTimeout(() => {
-      this.putNumber();
+      const number = Math.round(Math.random() + 1);
+      this.putNumber(number);
       this.animating = false;
       if (this.isGameOver()) {
         this.$emit("game-over");

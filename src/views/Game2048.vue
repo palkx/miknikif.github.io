@@ -45,6 +45,17 @@
             </v-list-item>
           </v-list>
         </v-menu>
+        <br />
+        <v-btn
+          rounded
+          outlined
+          color="primary"
+          dark
+          class="ma-2"
+          @click="restart()"
+        >
+          Restart
+        </v-btn>
       </div>
     </transition>
     <board
@@ -85,6 +96,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Board from "@/components/game/Board.vue";
+import TileInfo from "@/components/game/TileInfo.ts";
 import AnimatedInt from "@/components/AnimatedInt.vue";
 
 @Component({
@@ -100,9 +112,33 @@ export default class Game2048 extends Vue {
   size = 4;
   showOptions = false;
 
+  mounted() {
+    const board = this.$refs.board;
+    if (board instanceof Board) {
+      if (this.hasSaveData()) {
+        this.size = parseInt(localStorage.size);
+        this.score = parseInt(localStorage.score);
+        this.$emit("score-changed", this.score);
+        const tiles: TileInfo[] = [];
+        for (const json of JSON.parse(localStorage.tiles)) {
+          const tile = new TileInfo(0, 0, 0, 0);
+          Object.assign(tile, json);
+          tiles.push(tile);
+        }
+        board.initGame(tiles, this.score, this.size);
+      } else {
+        board.createBoard(this.size);
+      }
+    }
+  }
+
+  hasSaveData(): boolean {
+    return localStorage.tiles && localStorage.size && localStorage.score;
+  }
+
   private restart() {
     if (this.$refs.board instanceof Board) {
-      this.$refs.board.createBoard();
+      this.$refs.board.createBoard(this.size);
     }
     this.gaming = true;
   }
@@ -120,7 +156,7 @@ export default class Game2048 extends Vue {
       return;
     }
     this.size = v;
-    this.gaming = true;
+    this.restart();
   }
 
   changeColor(v) {
