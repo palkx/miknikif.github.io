@@ -13,10 +13,17 @@
       ></span>
     </p>
     <transition name="fade">
-      <div v-if="showOptions">
+      <div v-if="showOptions" class="settings-content">
         <v-menu transition="scroll-y-transition">
           <template v-slot:activator="{ on }">
-            <v-btn rounded outlined color="primary" dark class="ma-2" v-on="on">
+            <v-btn
+              rounded
+              outlined
+              color="primary"
+              dark
+              class="ma-2 settings-button"
+              v-on="on"
+            >
               Change Color
             </v-btn>
           </template>
@@ -30,7 +37,14 @@
         </v-menu>
         <v-menu transition="slide-y-transition">
           <template v-slot:activator="{ on }">
-            <v-btn rounded outlined color="primary" dark class="ma-2" v-on="on">
+            <v-btn
+              rounded
+              outlined
+              color="primary"
+              dark
+              class="ma-2 settings-button"
+              v-on="on"
+            >
               Change Size
             </v-btn>
           </template>
@@ -51,7 +65,7 @@
           outlined
           color="primary"
           dark
-          class="ma-2"
+          class="ma-2 settings-button"
           @click="restart()"
         >
           Restart
@@ -186,5 +200,25 @@ export default class Game2048 extends Vue {
   .arrow-controls {
     display: none;
   }
+}
+
+.settings-content {
+  display: block;
+  position: absolute;
+  margin: auto;
+  width: auto;
+  max-width: 400px;
+  min-width: 150px;
+  left: 5%;
+  right: 5%;
+  border: 1px lightgray solid;
+  border-radius: 5px;
+  background-color: var(--v-white-base);
+  z-index: 1;
+}
+
+.settings-button {
+  width: 80%;
+  margin: 0 10%;
 }
 </style>
