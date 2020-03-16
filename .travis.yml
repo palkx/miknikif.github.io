@@ -1,4 +1,7 @@
+os:
+  - linux
 language: node_js
+dist: xenial
 node_js:
   - "node"
 
@@ -8,8 +11,9 @@ script: npm run build
 
 deploy:
   provider: pages
-  skip_cleanup: true
-  github_token: $GITHUB_TOKEN
+  strategy: git
+  cleanup: false
+  token: $GITHUB_TOKEN
   local_dir: dist
   target_branch: master
   on:
