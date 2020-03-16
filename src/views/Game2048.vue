@@ -129,6 +129,7 @@ export default class Game2048 extends Vue {
   showSizeSetting = false;
 
   mounted() {
+    addEventListener("keyup", this.keyMoniter);
     const board = this.$refs.board;
     if (board instanceof Board) {
       if (this.hasSaveData()) {
@@ -148,11 +149,23 @@ export default class Game2048 extends Vue {
     }
   }
 
+  destroyed() {
+    removeEventListener("keyup", this.keyMoniter);
+  }
+
+  keyMoniter(event: Event) {
+    if (!(event instanceof KeyboardEvent)) return;
+    if (event.key === "Escape" && this.showOptions) {
+      this.showOptions = false;
+    }
+  }
+
   hasSaveData(): boolean {
     return localStorage.tiles && localStorage.size && localStorage.score;
   }
 
   private restart() {
+    this.showOptions = false;
     if (this.$refs.board instanceof Board) {
       this.$refs.board.createBoard(this.size);
     }
