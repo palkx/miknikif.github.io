@@ -1,5 +1,4 @@
 export default class TileInfo {
-
   public moved = false;
   public merged = false;
   public moveTo: Record<string, number> = {};
@@ -14,11 +13,13 @@ export default class TileInfo {
     this.moveTo = {
       row: this.row,
       column: this.column
-    }
+    };
     this.newNumber = number;
   }
 
   public info(): string {
-    return "number " + this.number + " row " + this.row + " column " + this.column
+    return (
+      "number " + this.number + " row " + this.row + " column " + this.column
+    );
   }
 }

@@ -70,7 +70,7 @@ export default class Tile extends Vue {
       { x: startValue.row, y: startValue.column },
       this.tweenTranslate
     )
-      .to({ x: endValue.row, y: endValue.column }, 200)
+      .to({ x: endValue.row, y: endValue.column }, this.randomDuration())
       .easing(TWEEN.Easing.Cubic.InOut)
       .onUpdate(value => {
         this.card.style.setProperty(
@@ -101,9 +101,13 @@ export default class Tile extends Vue {
     return this.tile.number;
   }
 
+  randomDuration() {
+    return Math.random() * 200 + 200;
+  }
+
   public scaleAnimation() {
     new TWEEN.Tween({ scale: 0.8 }, this.tweenScale)
-      .to({ scale: 1.0 }, 300)
+      .to({ scale: 1.0 }, this.randomDuration())
       .easing(TWEEN.Easing.Back.Out)
       .onUpdate(value => {
         this.card.style.setProperty("transform", `scale(${value.scale})`);
