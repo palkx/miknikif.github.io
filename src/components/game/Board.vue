@@ -54,7 +54,7 @@ export default class Board extends Vue {
     localStorage.tiles = JSON.stringify(this.tiles);
   }
 
-  clearData() {
+  removeSaveData() {
     localStorage.removeItem("tiles");
     localStorage.removeItem("score");
     localStorage.removeItem("size");
@@ -65,7 +65,7 @@ export default class Board extends Vue {
   }
 
   public createBoard(size: number = this.size) {
-    this.clearData();
+    this.removeSaveData();
     this.scoreChanged(0);
     this.size = size;
     this.tiles.length = 0;
@@ -267,6 +267,7 @@ export default class Board extends Vue {
       this.putNumber(number);
       this.animating = false;
       if (this.isGameOver()) {
+        this.removeSaveData();
         this.$emit("game-over");
         this.gaming = false;
       }
