@@ -1,5 +1,5 @@
 <template>
-  <v-container style="max-width: 500px; padding: 0;">
+  <v-container style="max-width: 500px; padding: 0; min-width: 200px">
     <h2 class="display-1 success--text pl-4">
       Simple Todo
     </h2>
@@ -14,9 +14,24 @@
       append-icon="mdi-plus"
       @click:append="create"
     ></v-text-field>
+    <v-text-field
+      style="width: 30%; min-width: 200px"
+      label="Category"
+      outlined
+      v-model="type"
+      clearable
+      @keydown.enter="create"
+    ></v-text-field>
 
-    <v-divider class="mt-4"></v-divider>
-
+    <v-row class="my-1">
+      <h2 class="success--text">Todo status</h2>
+      <v-spacer></v-spacer>
+      <v-progress-circular
+        :value="progress()"
+        color="primary"
+        class="mr-2"
+      ></v-progress-circular>
+    </v-row>
     <v-row class="my-1" align="center">
       <v-radio-group v-model="stateFilter" row>
         <v-radio :label="'All(' + allTasks() + ')'" value="all"></v-radio>
@@ -29,15 +44,26 @@
           value="completed"
         ></v-radio>
       </v-radio-group>
-
-      <v-spacer></v-spacer>
-
-      <v-progress-circular
-        :value="progress()"
-        color="primary"
-        class="mr-2"
-      ></v-progress-circular>
     </v-row>
+
+    <v-fade-transition>
+      <div v-if="allTypes.length > 1">
+        <v-row class="my-1">
+          <h2 class="success--text">Todo category</h2>
+        </v-row>
+        <v-row class="my-1" align="center">
+          <v-checkbox
+            style="margin: 10px;"
+            v-for="type of allTypes"
+            v-model="selectedTypes"
+            :label="showType(type)"
+            :key="type"
+            :value="showType(type)"
+            hide-details
+          ></v-checkbox>
+        </v-row>
+      </div>
+    </v-fade-transition>
 
     <v-divider class="mb-4"></v-divider>
 
@@ -57,6 +83,7 @@
                     :class="(task.completed && 'grey--text') || 'primary--text'"
                     class="ml-4"
                     v-text="task.description"
+                    :style="getTextType(i)"
                   ></div>
                 </template>
               </v-checkbox>
@@ -84,10 +111,11 @@ import Task from "@/components/todo/Task.ts";
 export default class Todo extends Vue {
   private tasks: Task[] = [];
   private allTypes: string[] = [];
-  private selectedTypes: string[] = [];
+  private selectedTypes: string[] = ["default"];
   private nextId = 0;
   private stateFilter = "all";
   private description = "";
+  private type = "";
 
   mounted() {
     this.description = "aaaa";
@@ -108,8 +136,19 @@ export default class Todo extends Vue {
         );
       })
       .filter(task => {
-        return task.type === "" || this.selectedTypes.includes(task.type);
+        return this.selectedTypes.includes(this.showType(task.type));
       });
+  }
+
+  getTextType(index: number) {
+    if (this.tasks[index].completed) {
+      return "text-decoration: line-through;";
+    } else {
+      return "";
+    }
+  }
+  showType(type: string): string {
+    return type === "" ? "default" : type;
   }
 
   completedTasks() {
@@ -132,9 +171,13 @@ export default class Todo extends Vue {
     if (this.description.trim() === "") {
       return;
     }
-    this.tasks.push(new Task(this.nextId, this.description));
+    this.tasks.push(new Task(this.nextId, this.description, this.type));
     this.nextId++;
     this.description = "";
+    if (!this.allTypes.includes(this.type)) {
+      this.allTypes.push(this.type);
+    }
+    console.log(this.allTypes);
   }
 }
 </script>
