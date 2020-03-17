@@ -49,7 +49,7 @@
         </v-row>
 
         <v-fade-transition>
-          <div v-if="allTypes.length > 1">
+          <div v-if="showTypes()">
             <v-row class="my-1">
               <h2 class="success--text">Todo category</h2>
             </v-row>
@@ -58,9 +58,9 @@
                 style="margin: 10px;"
                 v-for="type of allTypes"
                 v-model="selectedTypes"
-                :label="showType(type)"
+                :label="type"
                 :key="type"
-                :value="showType(type)"
+                :value="type"
                 hide-details
               ></v-checkbox>
             </v-row>
@@ -100,6 +100,9 @@
                     mdi-check
                   </v-icon>
                 </v-scroll-x-transition>
+                <v-icon color="error" @click="deleteTask(task)">
+                  mdi-delete
+                </v-icon>
               </v-list-item>
             </template>
           </v-slide-y-transition>
@@ -115,9 +118,11 @@ import Task from "@/components/todo/Task.ts";
 
 @Component
 export default class Todo extends Vue {
+  DEFAULT = "default";
+
   private tasks: Task[] = [];
   private allTypes: string[] = [];
-  private selectedTypes: string[] = ["default"];
+  private selectedTypes: string[] = [];
   private nextId = 0;
   private stateFilter = "all";
   private description = "";
@@ -133,19 +138,26 @@ export default class Todo extends Vue {
     }
     if (localStorage.tasks) {
       for (const json of JSON.parse(localStorage.tasks)) {
-        const task = new Task(0, "");
+        const task = new Task(0, this.DEFAULT);
         Object.assign(task, json);
         this.tasks.push(task);
       }
     }
-    const set = new Set(this.tasks.map(task => this.showType(task.type)));
-    set.add("default");
+    this.resetAllTypes();
+  }
+
+  resetAllTypes() {
+    const set = new Set(this.tasks.map(task => task.type));
     this.allTypes = [...set];
+    this.allTypes.sort((x, y) => {
+      return x === this.DEFAULT ? -1 : y == this.DEFAULT ? 1 : 0;
+    });
+    if (this.selectedTypes.length === 0) {
+      this.selectedTypes.push(this.DEFAULT);
+    }
   }
 
   get filterdTasks(): Task[] {
-    console.log("filterdTasks");
-
     return this.tasks
       .filter(task => {
         return (
@@ -155,7 +167,7 @@ export default class Todo extends Vue {
         );
       })
       .filter(task => {
-        return this.selectedTypes.includes(this.showType(task.type));
+        return this.selectedTypes.includes(task.type);
       });
   }
 
@@ -170,10 +182,6 @@ export default class Todo extends Vue {
     } else {
       return "";
     }
-  }
-
-  showType(type: string): string {
-    return type === "" ? "default" : type;
   }
 
   completedTasks() {
@@ -192,16 +200,25 @@ export default class Todo extends Vue {
     return this.tasks.length;
   }
 
+  showTypes(): boolean {
+    return (
+      this.allTypes.length > 1 ||
+      (this.allTypes.length === 1 && this.allTypes[0] != "default")
+    );
+  }
+
   create() {
     if (this.description.trim() === "") {
       return;
     }
-    this.tasks.push(new Task(this.nextId, this.description, this.type));
+    let type = this.type;
+    if (type === "" || type === null) {
+      type = this.DEFAULT;
+    }
+    this.tasks.push(new Task(this.nextId, this.description, type));
     this.nextId++;
     this.description = "";
-    if (!this.allTypes.includes(this.type)) {
-      this.allTypes.push(this.type);
-    }
+    this.resetAllTypes();
   }
 
   saveData() {
@@ -211,7 +228,16 @@ export default class Todo extends Vue {
 
   @Watch("tasks", { deep: true })
   onTaskChanged() {
+    // TODO a better process to save data
     this.saveData();
+  }
+
+  deleteTask(task: Task) {
+    const index = this.tasks.indexOf(task);
+    if (index > -1) {
+      this.tasks.splice(index, 1);
+    }
+    this.resetAllTypes();
   }
 }
 </script>

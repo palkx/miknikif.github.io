@@ -4,7 +4,7 @@ export default class Task {
   constructor(
     public id: number,
     public description: string,
-    public type: string = "",
+    public type: string = "default",
     public parentTaskId: number = -1
   ) {}
 }
