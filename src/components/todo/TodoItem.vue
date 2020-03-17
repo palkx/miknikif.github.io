@@ -10,13 +10,22 @@
       :color="(task.completed && 'grey') || 'primary'"
     >
     </v-checkbox>
-    <div
-      align="start"
-      :class="(task.completed && 'grey--text') || 'primary--text'"
-      class="ml-4 col-9 text-truncate"
-      v-text="task.description"
-      :style="getTextDecoration(task)"
-    ></div>
+    <v-tooltip bottom max-width="400px">
+      <template v-slot:activator="{ on }">
+        <div
+          v-on="on"
+          align="start"
+          :class="(task.completed && 'grey--text') || 'primary--text'"
+          class="ml-4 text-truncate"
+          v-text="task.description"
+          :style="getTextDecoration(task)"
+        ></div>
+      </template>
+      <div align="start" style="overflow-wrap: break-word;">
+        {{ task.description }}
+      </div>
+    </v-tooltip>
+
     <v-spacer></v-spacer>
     <v-scroll-x-transition>
       <v-icon v-if="task.completed" color="success">
