@@ -1,11 +1,11 @@
 <template>
-  <v-container style="max-width: 500px; padding: 0; min-width: 200px">
+  <v-container style="max-width: 500px; padding: 0 8px; min-width: 200px">
     <h2 class="display-1 success--text pl-4">
       Simple Todo
     </h2>
 
     <v-text-field
-      style="margin-top: 30px;"
+      style="margin-top: 30px; min-width: 200px"
       label="What's your next todo?"
       outlined
       v-model="description"
@@ -25,7 +25,7 @@
 
     <v-fade-transition>
       <div v-if="allTasks() > 0">
-        <v-row class="my-1">
+        <v-row class="my-1" no-gutters>
           <h2 class="success--text">Todo status</h2>
           <v-spacer></v-spacer>
           <v-progress-circular
@@ -34,14 +34,20 @@
             class="mr-2"
           ></v-progress-circular>
         </v-row>
-        <v-row class="my-1" align="center">
+        <v-row class="my-1" align="center" no-gutters>
           <v-radio-group v-model="stateFilter" row>
-            <v-radio :label="'All(' + allTasks() + ')'" value="all"></v-radio>
             <v-radio
+              class="status-filter"
+              :label="'All(' + allTasks() + ')'"
+              value="all"
+            ></v-radio>
+            <v-radio
+              class="status-filter"
               :label="'Incomplete(' + remainingTasks() + ')'"
               value="incomplete"
             ></v-radio>
             <v-radio
+              class="status-filter"
               :label="'Completed(' + completedTasks() + ')'"
               value="completed"
             ></v-radio>
@@ -50,11 +56,12 @@
 
         <v-fade-transition>
           <div v-if="showTypes()">
-            <v-row class="my-1">
+            <v-row class="my-1" no-gutters>
               <h2 class="success--text">Todo category</h2>
             </v-row>
             <v-row class="my-1" align="center">
               <v-checkbox
+                class="status-filter"
                 style="margin: 10px;"
                 v-for="type of allTypes"
                 v-model="selectedTypes"
@@ -73,37 +80,12 @@
           <v-slide-y-transition class="py-0" group tag="v-list">
             <template v-for="(task, i) of filterdTasks">
               <v-divider v-if="i !== 0" :key="`${task.id}-divider`"></v-divider>
-
-              <v-list-item :key="`${task.id}-item`">
-                <v-list-item-action>
-                  <v-checkbox
-                    v-model="task.completed"
-                    :color="(task.completed && 'grey') || 'primary'"
-                  >
-                    <template v-slot:label>
-                      <div
-                        :class="
-                          (task.completed && 'grey--text') || 'primary--text'
-                        "
-                        class="ml-4"
-                        v-text="task.description"
-                        :style="getTextType(i)"
-                      ></div>
-                    </template>
-                  </v-checkbox>
-                </v-list-item-action>
-
-                <v-spacer></v-spacer>
-
-                <v-scroll-x-transition>
-                  <v-icon v-if="task.completed" color="success">
-                    mdi-check
-                  </v-icon>
-                </v-scroll-x-transition>
-                <v-icon color="error" @click="deleteTask(task)">
-                  mdi-delete
-                </v-icon>
-              </v-list-item>
+              <todo-item
+                :key="`${task.id}-item`"
+                :task="task"
+                @delete-task="deleteTask"
+                @state-changed="saveData"
+              ></todo-item>
             </template>
           </v-slide-y-transition>
         </v-card>
@@ -113,10 +95,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue } from "vue-property-decorator";
 import Task from "@/components/todo/Task.ts";
+import TodoItem from "@/components/todo/TodoItem.vue";
 
-@Component
+@Component({
+  components: {
+    TodoItem
+  }
+})
 export default class Todo extends Vue {
   DEFAULT = "default";
 
@@ -171,19 +158,6 @@ export default class Todo extends Vue {
       });
   }
 
-  changeAndSave(task: Task) {
-    task.completed = !task.completed;
-    this.saveData();
-  }
-
-  getTextType(index: number) {
-    if (this.tasks[index].completed) {
-      return "text-decoration: line-through;";
-    } else {
-      return "";
-    }
-  }
-
   completedTasks() {
     return this.tasks.filter(task => task.completed).length;
   }
@@ -219,17 +193,12 @@ export default class Todo extends Vue {
     this.nextId++;
     this.description = "";
     this.resetAllTypes();
+    this.saveData();
   }
 
   saveData() {
     localStorage.nextId = this.nextId;
     localStorage.tasks = JSON.stringify(this.tasks);
-  }
-
-  @Watch("tasks", { deep: true })
-  onTaskChanged() {
-    // TODO a better process to save data
-    this.saveData();
   }
 
   deleteTask(task: Task) {
@@ -238,6 +207,16 @@ export default class Todo extends Vue {
       this.tasks.splice(index, 1);
     }
     this.resetAllTypes();
+    this.saveData();
   }
 }
 </script>
+
+<style>
+@media only screen and (max-width: 500px) {
+  .status-filter {
+    width: 40%;
+    margin: 4px;
+  }
+}
+</style>
