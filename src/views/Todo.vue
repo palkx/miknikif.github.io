@@ -44,9 +44,9 @@
     <v-card>
       <v-slide-y-transition class="py-0" group tag="v-list">
         <template v-for="(task, i) of filterdTasks()">
-          <v-divider v-if="i !== 0" :key="`${task.id}`"></v-divider>
+          <v-divider v-if="i !== 0" :key="`${task.id}-divider`"></v-divider>
 
-          <v-list-item :key="`${task.id}`">
+          <v-list-item :key="`${task.id}-item`">
             <v-list-item-action>
               <v-checkbox
                 v-model="task.completed"
