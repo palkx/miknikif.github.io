@@ -1,45 +1,39 @@
 <template>
-  <v-container style="max-width: 500px; margin-top: 10%; padding: 0;">
-    <v-text-field
-      v-model="task"
-      label="What are you working on?"
-      solo
-      @keydown.enter="create"
-    >
-      <v-fade-transition v-slot:append>
-        <v-icon v-if="task" @click="create">
-          add_circle
-        </v-icon>
-      </v-fade-transition>
-      
-    </v-text-field>
-
+  <v-container style="max-width: 500px; padding: 0;">
     <h2 class="display-1 success--text pl-4">
-      Tasks:&nbsp;
-      <v-fade-transition leave-absolute>
-        <span :key="`tasks-${tasks.length}`">
-          {{ tasks.length }}
-        </span>
-      </v-fade-transition>
+      Simple Todo
     </h2>
+
+    <v-text-field
+      style="margin-top: 30px;"
+      label="What's your next todo?"
+      outlined
+      v-model="description"
+      @keydown.enter="create"
+      clearable
+      append-icon="mdi-plus"
+      @click:append="create"
+    ></v-text-field>
 
     <v-divider class="mt-4"></v-divider>
 
     <v-row class="my-1" align="center">
-      <strong class="mx-4 info--text text--darken-2">
-        Remaining: {{ remainingTasks }}
-      </strong>
-
-      <v-divider vertical></v-divider>
-
-      <strong class="mx-4 success--text text--darken-2">
-        Completed: {{ completedTasks }}
-      </strong>
+      <v-radio-group v-model="stateFilter" row>
+        <v-radio :label="'All(' + allTasks() + ')'" value="all"></v-radio>
+        <v-radio
+          :label="'Incomplete(' + remainingTasks() + ')'"
+          value="incomplete"
+        ></v-radio>
+        <v-radio
+          :label="'Completed(' + completedTasks() + ')'"
+          value="completed"
+        ></v-radio>
+      </v-radio-group>
 
       <v-spacer></v-spacer>
 
       <v-progress-circular
-        :value="progress"
+        :value="progress()"
         color="primary"
         class="mr-2"
       ></v-progress-circular>
@@ -47,22 +41,22 @@
 
     <v-divider class="mb-4"></v-divider>
 
-    <v-card v-if="tasks.length > 0">
+    <v-card>
       <v-slide-y-transition class="py-0" group tag="v-list">
-        <template v-for="(task, i) in tasks">
-          <v-divider v-if="i !== 0" :key="`${i}-divider`"></v-divider>
+        <template v-for="(task, i) of filterdTasks()">
+          <v-divider v-if="i !== 0" :key="`${task.id}`"></v-divider>
 
-          <v-list-item :key="`${i}-${task.text}`">
+          <v-list-item :key="`${task.id}`">
             <v-list-item-action>
               <v-checkbox
-                v-model="task.done"
-                :color="(task.done && 'grey') || 'primary'"
+                v-model="task.completed"
+                :color="(task.completed && 'grey') || 'primary'"
               >
                 <template v-slot:label>
                   <div
-                    :class="(task.done && 'grey--text') || 'primary--text'"
+                    :class="(task.completed && 'grey--text') || 'primary--text'"
                     class="ml-4"
-                    v-text="task.text"
+                    v-text="task.description"
                   ></div>
                 </template>
               </v-checkbox>
@@ -71,7 +65,7 @@
             <v-spacer></v-spacer>
 
             <v-scroll-x-transition>
-              <v-icon v-if="task.done" color="success">
+              <v-icon v-if="task.completed" color="success">
                 mdi-check
               </v-icon>
             </v-scroll-x-transition>
@@ -82,40 +76,66 @@
   </v-container>
 </template>
 
-<script>
-export default {
-  data: () => ({
-    tasks: [
-      {
-        done: false,
-        text: "Foobar"
-      },
-      {
-        done: false,
-        text: "Fizzbuzz"
-      }
-    ],
-    task: null
-  }),
-  computed: {
-    completedTasks() {
-      return this.tasks.filter(task => task.done).length;
-    },
-    progress() {
-      return (this.completedTasks / this.tasks.length) * 100;
-    },
-    remainingTasks() {
-      return this.tasks.length - this.completedTasks;
-    }
-  },
-  methods: {
-    create() {
-      this.tasks.push({
-        done: false,
-        text: this.task
-      });
-      this.task = null;
-    }
+<script lang="ts">
+import { Component, Vue } from "vue-property-decorator";
+import Task from "@/components/todo/Task.ts";
+
+@Component
+export default class Todo extends Vue {
+  private tasks: Task[] = [];
+  private allTypes: string[] = [];
+  private selectedTypes: string[] = [];
+  private nextId = 0;
+  private stateFilter = "all";
+  private description = "";
+
+  mounted() {
+    this.description = "aaaa";
+    this.create();
+    this.description = "bbbb";
+    this.create();
+    this.description = "cccc";
+    this.create();
   }
-};
+
+  filterdTasks(): Task[] {
+    // TODO filterdTasks called while input changed
+    return this.tasks
+      .filter(task => {
+        return (
+          this.stateFilter === "all" ||
+          (task.completed && this.stateFilter === "completed") ||
+          (!task.completed && this.stateFilter === "incomplete")
+        );
+      })
+      .filter(task => {
+        return task.type === "" || this.selectedTypes.includes(task.type);
+      });
+  }
+
+  completedTasks() {
+    return this.tasks.filter(task => task.completed).length;
+  }
+
+  progress() {
+    return (this.completedTasks() / this.tasks.length) * 100;
+  }
+
+  remainingTasks() {
+    return this.allTasks() - this.completedTasks();
+  }
+
+  allTasks() {
+    return this.tasks.length;
+  }
+
+  create() {
+    if (this.description.trim() === "") {
+      return;
+    }
+    this.tasks.push(new Task(this.nextId, this.description));
+    this.nextId++;
+    this.description = "";
+  }
+}
 </script>
