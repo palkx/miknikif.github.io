@@ -13,7 +13,7 @@
         Score: <animated-int v-bind:value="score"></animated-int
       ></span>
     </p>
-    <v-expand-transition>
+    <transition name="fade">
       <div v-if="showOptions" class="settings-content" id="menu">
         <v-btn
           rounded
@@ -59,7 +59,6 @@
             </v-list-item>
           </v-list>
         </v-expand-transition>
-        <br />
         <v-btn
           rounded
           outlined
@@ -71,7 +70,7 @@
           Restart
         </v-btn>
       </div>
-    </v-expand-transition>
+    </transition>
 
     <board
       ref="board"
@@ -247,6 +246,10 @@ export default class Game2048 extends Vue {
 .fade-enter,
 .fade-leave-to {
   opacity: 0;
+}
+
+.v-list {
+  padding: 0;
 }
 
 @media only screen and (min-width: 600px) {
