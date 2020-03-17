@@ -5,6 +5,7 @@
     <v-content>
       <div id="nav">
         <router-link to="/">2048</router-link> |
+        <router-link to="/todo">Todo</router-link> |
         <router-link to="/about">About</router-link>
       </div>
       <keep-alive>
