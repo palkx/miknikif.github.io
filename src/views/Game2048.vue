@@ -14,7 +14,7 @@
       ></span>
     </p>
     <transition name="fade">
-      <div v-if="showOptions" class="settings-content" id="menu">
+      <v-card v-if="showOptions" class="settings-content" id="menu">
         <v-btn
           rounded
           outlined
@@ -69,7 +69,7 @@
         >
           Restart
         </v-btn>
-      </div>
+      </v-card>
     </transition>
 
     <board
@@ -286,8 +286,6 @@ export default class Game2048 extends Vue {
   min-width: 150px;
   left: 5%;
   right: 5%;
-  border: 1px lightgray solid;
-  border-radius: 5px;
   background-color: var(--v-white-base);
   z-index: 1;
 }
