@@ -43,7 +43,7 @@
 
     <v-card>
       <v-slide-y-transition class="py-0" group tag="v-list">
-        <template v-for="(task, i) of filterdTasks()">
+        <template v-for="(task, i) of filterdTasks">
           <v-divider v-if="i !== 0" :key="`${task.id}-divider`"></v-divider>
 
           <v-list-item :key="`${task.id}-item`">
@@ -98,8 +98,7 @@ export default class Todo extends Vue {
     this.create();
   }
 
-  filterdTasks(): Task[] {
-    // TODO filterdTasks called while input changed
+  get filterdTasks(): Task[] {
     return this.tasks
       .filter(task => {
         return (
