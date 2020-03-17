@@ -1,23 +1,23 @@
 <template>
-  <v-list-item>
-    <v-list-item-action>
-      <v-checkbox
-        v-model="task.completed"
-        :color="(task.completed && 'grey') || 'primary'"
-      >
-        <template v-slot:label>
-          <div
-            :class="(task.completed && 'grey--text') || 'primary--text'"
-            class="ml-4"
-            v-text="task.description"
-            :style="getTextDecoration(task)"
-          ></div>
-        </template>
-      </v-checkbox>
-    </v-list-item-action>
-
+  <v-row
+    align="center"
+    class="item flex-nowrap"
+    no-gutters
+    style="padding: 0 8px;"
+  >
+    <v-checkbox
+      v-model="task.completed"
+      :color="(task.completed && 'grey') || 'primary'"
+    >
+    </v-checkbox>
+    <div
+      align="start"
+      :class="(task.completed && 'grey--text') || 'primary--text'"
+      class="ml-4 col-9 text-truncate"
+      v-text="task.description"
+      :style="getTextDecoration(task)"
+    ></div>
     <v-spacer></v-spacer>
-
     <v-scroll-x-transition>
       <v-icon v-if="task.completed" color="success">
         mdi-check
@@ -26,7 +26,7 @@
     <v-icon color="error" @click="deleteTask(task)">
       mdi-delete
     </v-icon>
-  </v-list-item>
+  </v-row>
 </template>
 
 <script lang="ts">

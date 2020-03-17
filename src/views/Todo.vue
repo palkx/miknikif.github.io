@@ -1,5 +1,7 @@
 <template>
-  <v-container style="max-width: 500px; padding: 0 8px; min-width: 200px">
+  <v-container
+    style="max-width: 500px; padding: 0 8px; min-width: 200px; margin-bottom: 20px;"
+  >
     <h2 class="display-1 success--text pl-4">
       Simple Todo
     </h2>
@@ -213,10 +215,10 @@ export default class Todo extends Vue {
 </script>
 
 <style>
-@media only screen and (max-width: 500px) {
+@media only screen and (max-width: 700px) {
   .status-filter {
     width: 40%;
-    margin: 4px;
+    margin: 8px;
   }
 }
 </style>
