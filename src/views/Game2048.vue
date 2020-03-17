@@ -47,7 +47,7 @@
         >
           Change Size
         </v-btn>
-        <v-expand-transition>
+        <transition name="scroll">
           <v-list v-if="showSizeSetting">
             <v-list-item
               v-for="n in [3, 4, 5, 6]"
@@ -58,7 +58,7 @@
               <v-list-item-title v-text="n + ' x ' + n"></v-list-item-title>
             </v-list-item>
           </v-list>
-        </v-expand-transition>
+        </transition>
         <v-btn
           rounded
           outlined
@@ -250,6 +250,24 @@ export default class Game2048 extends Vue {
 
 .v-list {
   padding: 0;
+  overflow: hidden;
+}
+
+.scroll-enter-active,
+.scroll-leave-active {
+  transition: height 0.5s;
+  transition-timing-function: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.scroll-enter,
+.scroll-leave-to {
+  height: 0;
+}
+
+.scroll-enter-to,
+.scroll-leave {
+  /* a hardcoded height to make the transition looks right */
+  height: 220px;
 }
 
 @media only screen and (min-width: 600px) {
