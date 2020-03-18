@@ -29,7 +29,6 @@ import TileInfo from "@/components/game/TileInfo.ts";
 export default class Board extends Vue {
   @Prop({ default: "0x1eba74" }) tileColor!: string;
   private size = 4;
-  private score = 0;
   private tiles: TileInfo[] = [];
   private gaming = true;
   private animating = false;
@@ -42,22 +41,9 @@ export default class Board extends Vue {
     }
   }
 
-  initGame(tiles: TileInfo[], score: number, size: number) {
+  initGame(tiles: TileInfo[], size: number) {
     this.tiles = tiles;
-    this.score = score;
     this.size = size;
-  }
-
-  saveData() {
-    localStorage.score = this.score;
-    localStorage.size = this.size;
-    localStorage.tiles = JSON.stringify(this.tiles);
-  }
-
-  removeSaveData() {
-    localStorage.removeItem("tiles");
-    localStorage.removeItem("score");
-    localStorage.removeItem("size");
   }
 
   destroyed() {
@@ -65,8 +51,6 @@ export default class Board extends Vue {
   }
 
   public createBoard(size: number = this.size) {
-    this.removeSaveData();
-    this.scoreChanged(0);
     this.size = size;
     this.tiles.length = 0;
     for (let index = 0; index < this.size * this.size; index++) {
@@ -98,7 +82,6 @@ export default class Board extends Vue {
       if (tile.number === 0) {
         tile.number = number;
         tile.newNumber = number;
-        this.saveData();
         this.scaleTile(tile);
         break;
       }
@@ -205,11 +188,6 @@ export default class Board extends Vue {
     this.moveAndCheck(true, true);
   }
 
-  private scoreChanged(newScore: number) {
-    this.score = newScore;
-    this.$emit("score-changed", this.score);
-  }
-
   public merge(array: TileInfo[]): boolean {
     let previousIndex = 0;
     let changed = false;
@@ -238,8 +216,9 @@ export default class Board extends Vue {
         } else {
           array[previousIndex].merged = true;
           array[previousIndex].newNumber += 1;
-          this.scoreChanged(
-            this.score + Math.pow(2, array[previousIndex].newNumber)
+          this.$emit(
+            "score-changed",
+            Math.pow(2, array[previousIndex].newNumber)
           );
           previousIndex++;
         }
@@ -267,7 +246,6 @@ export default class Board extends Vue {
       this.putNumber(number);
       this.animating = false;
       if (this.isGameOver()) {
-        this.removeSaveData();
         this.$emit("game-over");
         this.gaming = false;
       }

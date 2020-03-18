@@ -75,7 +75,7 @@
     <board
       ref="board"
       @game-over="gameOver"
-      @score-changed="showScore"
+      @score-changed="addScore"
       v-bind:tile-color="color"
     />
 
@@ -119,6 +119,7 @@ import AnimatedInt from "@/components/AnimatedInt.vue";
   }
 })
 export default class Game2048 extends Vue {
+  private tiles: TileInfo[] = [];
   score = 0;
   gaming = true;
   color = "0x1eba74";
@@ -128,6 +129,7 @@ export default class Game2048 extends Vue {
   showSizeSetting = false;
 
   mounted() {
+    addEventListener("beforeunload", this.saveData);
     addEventListener("keyup", this.keyMoniter);
     this.closeMenuIfClickOutside();
     const board = this.$refs.board;
@@ -136,17 +138,28 @@ export default class Game2048 extends Vue {
         this.size = parseInt(localStorage.size);
         this.score = parseInt(localStorage.score);
         this.$emit("score-changed", this.score);
-        const tiles: TileInfo[] = [];
         for (const json of JSON.parse(localStorage.tiles)) {
           const tile = new TileInfo(0, 0, 0, 0);
           Object.assign(tile, json);
-          tiles.push(tile);
+          this.tiles.push(tile);
         }
-        board.initGame(tiles, this.score, this.size);
+        board.initGame(this.tiles, this.size);
       } else {
         board.createBoard(this.size);
       }
     }
+  }
+
+  saveData() {
+    localStorage.score = this.score;
+    localStorage.size = this.size;
+    localStorage.tiles = JSON.stringify(this.tiles);
+  }
+
+  removeSaveData() {
+    localStorage.removeItem("tiles");
+    localStorage.removeItem("score");
+    localStorage.removeItem("size");
   }
 
   containsElement(id: string, event: MouseEvent): boolean {
@@ -203,14 +216,16 @@ export default class Game2048 extends Vue {
       this.$refs.board.createBoard(this.size);
     }
     this.gaming = true;
+    this.score = 0;
   }
 
   private gameOver() {
+    this.removeSaveData();
     this.gaming = false;
   }
 
-  private showScore(newScore: number) {
-    this.score = newScore;
+  private addScore(score: number) {
+    this.score += score;
   }
 
   changeSize(v) {
