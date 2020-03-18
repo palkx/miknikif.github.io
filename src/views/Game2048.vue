@@ -3,19 +3,21 @@
     class="px-2 mb-5 py-0"
     style="max-width: 600px;  min-width: 300px; "
   >
-    <p class="d-flex justify-center align-center">
+    <v-row no-gutters class="px-3">
+      <span class="mdi mdi-settings"></span>
+      <span class="headline">
+        Score: <animated-int v-bind:value="score"></animated-int
+      ></span>
+      <v-spacer></v-spacer>
       <v-btn
         id="open-menu"
         icon
         color="primary"
         @click="showOptions = !showOptions"
         class="headline"
-        >⚙
+        ><v-icon>mdi-cog</v-icon>
       </v-btn>
-      <span class="headline">
-        Score: <animated-int v-bind:value="score"></animated-int
-      ></span>
-    </p>
+    </v-row>
     <transition name="fade">
       <v-card v-if="showOptions" class="settings-content" id="menu">
         <v-btn
@@ -297,12 +299,9 @@ export default class Game2048 extends Vue {
 .settings-content {
   display: block;
   position: absolute;
-  margin: auto;
-  width: auto;
   padding: 10px 0;
-  max-width: 350px;
-  min-width: 150px;
-  left: 5%;
+  width: 250px;
+  min-width: 200px;
   right: 5%;
   background-color: var(--v-white-base);
   z-index: 1;
