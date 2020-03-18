@@ -1,5 +1,5 @@
 <template>
-  <div class="container">
+  <v-responsive :aspect-ratio="1 / 1" class="container">
     <div class="board">
       <tile
         class="tile"
@@ -13,7 +13,7 @@
         v-bind:style="sizeStyle"
       ></tile>
     </div>
-  </div>
+  </v-responsive>
 </template>
 
 <script lang="ts">
@@ -278,18 +278,12 @@ export default class Board extends Vue {
 
 <style>
 .container {
-  margin: 20px auto;
-  width: 60%;
-  padding-top: 60%;
-  position: relative;
+  width: 80%;
+  min-width: 300px;
 }
-
 .board {
-  position: absolute;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  right: 0;
+  width: 100%;
+  height: 100%;
   display: flex;
   justify-content: space-around;
   align-content: space-around;
@@ -313,18 +307,7 @@ export default class Board extends Vue {
 
 @media only screen and (max-width: 500px) {
   .container {
-    width: 80%;
-    padding-top: 80%;
-    min-width: 200px;
-    min-height: 200px;
-  }
-}
-
-@media only screen and (min-width: 800px) {
-  .container {
-    width: 400px;
-    height: 400px;
-    padding-top: 0;
+    width: 90%;
   }
 }
 </style>

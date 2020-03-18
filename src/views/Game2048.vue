@@ -1,5 +1,8 @@
 <template>
-  <div class="game2048">
+  <v-container
+    class="px-2 mb-5 py-0"
+    style="max-width: 600px;  min-width: 300px; "
+  >
     <p class="d-flex justify-center align-center">
       <v-btn
         id="open-menu"
@@ -103,7 +106,7 @@
         </v-btn>
       </div>
     </transition>
-  </div>
+  </v-container>
 </template>
 
 <script lang="ts">
