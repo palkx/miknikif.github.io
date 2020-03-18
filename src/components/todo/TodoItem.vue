@@ -1,5 +1,11 @@
 <template>
-  <v-row align="center" class="item flex-nowrap mx-0 my-2" no-gutters v-ripple>
+  <v-row
+    align="center"
+    class="flex-nowrap mx-0 px-2"
+    no-gutters
+    v-ripple
+    style="height:48px"
+  >
     <v-checkbox
       v-model="task.completed"
       :color="(task.completed && 'grey') || 'primary'"
@@ -12,13 +18,14 @@
           align="start"
           :class="(task.completed && 'grey--text') || 'primary--text'"
           class="ml-4 text-truncate"
-          v-text="task.description"
           :style="getTextDecoration(task)"
-        ></div>
+        >
+          {{ task.description }}
+        </div>
       </template>
-      <div align="start" style="overflow-wrap: break-word;">
+      <span align="start" style="overflow-wrap: break-word;">
         {{ task.description }}
-      </div>
+      </span>
     </v-tooltip>
 
     <v-spacer></v-spacer>

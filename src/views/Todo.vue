@@ -45,7 +45,12 @@
           <h4 class="primary--text">State</h4>
         </v-row>
         <v-row no-gutters>
-          <v-radio-group v-model="stateFilter" row hide-details>
+          <v-radio-group
+            v-model="stateFilter"
+            row
+            hide-details
+            class="ma-0 col-12"
+          >
             <v-radio
               class="state-filter ma-2"
               :label="'All(' + allTasks() + ')'"
@@ -64,11 +69,11 @@
           </v-radio-group>
         </v-row>
         <v-fade-transition>
-          <div v-if="showTypes()" class="mt-4">
+          <div v-if="showTypes()">
             <v-row no-gutters>
               <h4 class="primary--text">Category</h4>
             </v-row>
-            <v-row align="center" no-gutters>
+            <v-row no-gutters>
               <v-checkbox
                 class="state-filter ma-2"
                 v-for="type of allTypes"
@@ -201,6 +206,12 @@ export default class Todo extends Vue {
     this.nextId++;
     this.description = "";
     this.resetAllTypes();
+    if (!this.selectedTypes.includes(type)) {
+      this.selectedTypes.push(type);
+    }
+    if (this.stateFilter === "completed") {
+      this.stateFilter = "incomplete";
+    }
   }
 
   saveData() {
