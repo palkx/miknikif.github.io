@@ -85,18 +85,18 @@
     <transition name="fade" mode="out-in">
       <div class="arrow-controls" v-if="gaming" key="game-control">
         <v-btn rounded color="primary" dark class="ma-2" @click="move('w')">
-          ⇧
+          <v-icon>mdi-arrow-up-bold</v-icon>
         </v-btn>
         <br />
         <v-btn rounded color="primary" dark class="ma-2" @click="move('a')">
-          ⇦
+          <v-icon>mdi-arrow-left-bold</v-icon>
         </v-btn>
         <v-btn rounded color="primary" dark class="ma-2" @click="move('d')">
-          ⇨
+          <v-icon>mdi-arrow-right-bold</v-icon>
         </v-btn>
         <br />
         <v-btn rounded color="primary" dark class="ma-2" @click="move('s')">
-          ⇩
+          <v-icon>mdi-arrow-down-bold</v-icon>
         </v-btn>
       </div>
       <div class="restart" v-else key="restart">
