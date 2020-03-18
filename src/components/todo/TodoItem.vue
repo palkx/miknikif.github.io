@@ -1,11 +1,5 @@
 <template>
-  <v-row
-    align="center"
-    class="item flex-nowrap"
-    no-gutters
-    style="padding: 0 8px;"
-    v-ripple
-  >
+  <v-row align="center" class="item flex-nowrap mx-0 my-2" no-gutters v-ripple>
     <v-checkbox
       v-model="task.completed"
       :color="(task.completed && 'grey') || 'primary'"

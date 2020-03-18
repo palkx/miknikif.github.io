@@ -1,14 +1,17 @@
 <template>
   <v-container
-    style="max-width: 500px; padding: 0 8px; min-width: 200px; margin-bottom: 20px;"
+    class="px-2 mb-5 py-0"
+    style="max-width: 500px;  min-width: 200px; "
   >
-    <h2 class="display-1 success--text pl-4">
+    <h2 class="display-1 success--text">
       Simple Todo
     </h2>
 
     <v-text-field
-      style="margin-top: 30px; min-width: 200px"
+      class="mt-4"
+      style="min-width: 200px"
       label="What's your next todo?"
+      hide-details
       outlined
       v-model="description"
       @keydown.enter="create"
@@ -17,9 +20,11 @@
       @click:append="create"
     ></v-text-field>
     <v-text-field
+      class="my-2"
       style="width: 30%; min-width: 200px"
       label="Category"
       outlined
+      hide-details
       v-model="type"
       clearable
       @keydown.enter="create"
@@ -27,44 +32,45 @@
 
     <v-fade-transition>
       <div v-if="allTasks() > 0">
-        <v-row class="my-1" no-gutters>
-          <h2 class="success--text">Todo status</h2>
+        <v-divider class="my-2"></v-divider>
+        <v-row no-gutters>
+          <h2 class="primary--text">Filters</h2>
           <v-spacer></v-spacer>
           <v-progress-circular
             :value="progress()"
             color="primary"
-            class="mr-2"
           ></v-progress-circular>
         </v-row>
-        <v-row class="my-1" align="center" no-gutters>
-          <v-radio-group v-model="stateFilter" row>
+        <v-row no-gutters>
+          <h4 class="primary--text">State</h4>
+        </v-row>
+        <v-row no-gutters>
+          <v-radio-group v-model="stateFilter" row hide-details>
             <v-radio
-              class="status-filter"
+              class="state-filter ma-2"
               :label="'All(' + allTasks() + ')'"
               value="all"
             ></v-radio>
             <v-radio
-              class="status-filter"
+              class="state-filter ma-2"
               :label="'Incomplete(' + remainingTasks() + ')'"
               value="incomplete"
             ></v-radio>
             <v-radio
-              class="status-filter"
+              class="state-filter ma-2"
               :label="'Completed(' + completedTasks() + ')'"
               value="completed"
             ></v-radio>
           </v-radio-group>
         </v-row>
-
         <v-fade-transition>
-          <div v-if="showTypes()">
-            <v-row class="my-1" no-gutters>
-              <h2 class="success--text">Todo category</h2>
+          <div v-if="showTypes()" class="mt-4">
+            <v-row no-gutters>
+              <h4 class="primary--text">Category</h4>
             </v-row>
-            <v-row class="my-1" align="center">
+            <v-row align="center" no-gutters>
               <v-checkbox
-                class="status-filter"
-                style="margin: 10px;"
+                class="state-filter ma-2"
                 v-for="type of allTypes"
                 v-model="selectedTypes"
                 :label="type"
@@ -198,7 +204,6 @@ export default class Todo extends Vue {
   }
 
   saveData() {
-    console.log("save");
     localStorage.nextId = this.nextId;
     localStorage.tasks = JSON.stringify(this.tasks);
   }
@@ -215,9 +220,8 @@ export default class Todo extends Vue {
 
 <style>
 @media only screen and (max-width: 700px) {
-  .status-filter {
+  .state-filter {
     width: 40%;
-    margin: 8px;
   }
 }
 </style>
