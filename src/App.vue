@@ -30,7 +30,8 @@ export default Vue.extend({
     activeTab: "/",
     tabs: [
       { name: "2048", route: "/" },
-      { name: "Todo", route: "/todo" }
+      { name: "Todo", route: "/todo" },
+      { name: "Posts", route: "/posts" }
     ],
     last: { name: "About", route: "/about" }
   })
