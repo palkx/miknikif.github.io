@@ -4,13 +4,14 @@
     class="item flex-nowrap"
     no-gutters
     style="padding: 0 8px;"
+    v-ripple
   >
     <v-checkbox
       v-model="task.completed"
       :color="(task.completed && 'grey') || 'primary'"
     >
     </v-checkbox>
-    <v-tooltip bottom max-width="400px">
+    <v-tooltip bottom max-width="400px" open-delay="300">
       <template v-slot:activator="{ on }">
         <div
           v-on="on"

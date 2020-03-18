@@ -86,7 +86,6 @@
                 :key="`${task.id}-item`"
                 :task="task"
                 @delete-task="deleteTask"
-                @state-changed="saveData"
               ></todo-item>
             </template>
           </v-slide-y-transition>
@@ -118,6 +117,7 @@ export default class Todo extends Vue {
   private type = "";
 
   mounted() {
+    addEventListener("beforeunload", this.saveData);
     this.loadData();
   }
 
@@ -195,10 +195,10 @@ export default class Todo extends Vue {
     this.nextId++;
     this.description = "";
     this.resetAllTypes();
-    this.saveData();
   }
 
   saveData() {
+    console.log("save");
     localStorage.nextId = this.nextId;
     localStorage.tasks = JSON.stringify(this.tasks);
   }
@@ -209,7 +209,6 @@ export default class Todo extends Vue {
       this.tasks.splice(index, 1);
     }
     this.resetAllTypes();
-    this.saveData();
   }
 }
 </script>
