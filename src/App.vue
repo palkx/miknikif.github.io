@@ -1,13 +1,18 @@
 <template>
   <v-app>
-    <v-app-bar app color="primary" dark> </v-app-bar>
+    <v-app-bar app color="primary" light hide-on-scroll>
+      <v-tabs v-model="activeTab" color="white">
+        <v-tab v-for="tab in tabs" :key="tab.name" :to="tab.route">
+          {{ tab.name }}
+        </v-tab>
+        <v-spacer></v-spacer>
+        <v-tab :to="last.route">
+          {{ last.name }}
+        </v-tab>
+      </v-tabs>
+    </v-app-bar>
 
-    <v-content>
-      <div id="nav">
-        <router-link to="/">2048</router-link> |
-        <router-link to="/todo">Todo</router-link> |
-        <router-link to="/about">About</router-link>
-      </div>
+    <v-content class="mt-5">
       <keep-alive>
         <router-view />
       </keep-alive>
@@ -22,7 +27,12 @@ export default Vue.extend({
   name: "App",
 
   data: () => ({
-    //
+    activeTab: "/",
+    tabs: [
+      { name: "2048", route: "/" },
+      { name: "Todo", route: "/todo" }
+    ],
+    last: { name: "About", route: "/about" }
   })
 });
 </script>
@@ -33,16 +43,6 @@ export default Vue.extend({
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: var(--v-black-base);
-}
-#nav {
-  padding: 30px;
-  a {
-    font-weight: bold;
-    color: var(--v-black-base);
-    &.router-link-exact-active {
-      color: var(--v-primary-base);
-    }
-  }
 }
 
 .no_highlighting {
