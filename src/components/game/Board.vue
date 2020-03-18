@@ -276,7 +276,7 @@ export default class Board extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .container {
   width: 80%;
   min-width: 300px;

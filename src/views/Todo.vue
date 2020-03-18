@@ -229,7 +229,7 @@ export default class Todo extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 @media only screen and (max-width: 700px) {
   .state-filter {
     width: 40%;

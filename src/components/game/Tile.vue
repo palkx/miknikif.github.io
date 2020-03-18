@@ -161,7 +161,7 @@ export default class Tile extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .number-container {
   width: 100%;
   height: 100%;

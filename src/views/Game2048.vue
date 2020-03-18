@@ -255,7 +255,7 @@ export default class Game2048 extends Vue {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.5s;
