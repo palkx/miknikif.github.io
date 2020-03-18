@@ -26,6 +26,7 @@ export default class Tile extends Vue {
   MAX = 12;
   moveATile = 111.11;
   private card!: HTMLElement;
+  private currentTween: TWEEN.Tween;
   private tweenTranslate = new TWEEN.Group();
   private tweenScale = new TWEEN.Group();
 
@@ -66,7 +67,10 @@ export default class Tile extends Vue {
     ) {
       return;
     }
-    new TWEEN.Tween(
+    if (this.currentTween) {
+      this.currentTween.stop();
+    }
+    this.currentTween = new TWEEN.Tween(
       { x: startValue.row, y: startValue.column },
       this.tweenTranslate
     )
@@ -106,7 +110,10 @@ export default class Tile extends Vue {
   }
 
   public scaleAnimation() {
-    new TWEEN.Tween({ scale: 0.8 }, this.tweenScale)
+    if (this.currentTween) {
+      this.currentTween.stop();
+    }
+    this.currentTween = new TWEEN.Tween({ scale: 0.8 }, this.tweenScale)
       .to({ scale: 1.0 }, this.randomDuration())
       .easing(TWEEN.Easing.Back.Out)
       .onUpdate(value => {
