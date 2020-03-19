@@ -11,11 +11,11 @@
         <v-list-item-group v-model="selected">
           <v-list-item
             color="primary"
-            v-for="post in map.keys()"
+            v-for="post in list"
             :key="post"
             @click="showPost(post)"
           >
-            <v-list-item-title>{{ showName(post) }}</v-list-item-title>
+            <v-list-item-title>{{ manager.showName(post) }}</v-list-item-title>
           </v-list-item>
         </v-list-item-group>
       </v-list>
@@ -30,6 +30,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import Post from "@/components/posts/Post.vue";
 import PostInfo from "@/components/posts/PostInfo.ts";
+import PostManager from "@/components/posts/PostManager.ts";
 import Loading from "@/components/Loading.vue";
 import showdown from "showdown";
 import axios from "axios";
@@ -41,7 +42,6 @@ import axios from "axios";
   }
 })
 export default class Posts extends Vue {
-  private SPLITER = "==========";
   private converter = new showdown.Converter({
     metadata: true,
     noHeaderId: true,
@@ -52,7 +52,9 @@ export default class Posts extends Vue {
     tasklists: true,
     simpleLineBreaks: true
   });
-  private map: Map<string, PostInfo> = new Map();
+
+  private manager = new PostManager();
+  private list: string[] = [];
   private loadingList = true;
   private loadingPost = false;
   private selected = "";
@@ -67,7 +69,8 @@ export default class Posts extends Vue {
       .then(response => {
         for (const name of response.data.split("\n")) {
           if (name != "") {
-            this.map.set(name, new PostInfo());
+            this.list.push(name);
+            this.manager.setPost(name, new PostInfo(name));
           }
         }
       })
@@ -78,59 +81,51 @@ export default class Posts extends Vue {
   }
 
   showPost(name: string) {
-    const post = this.map.get(name);
+    const post = this.manager.getPost(name);
     if (post && post.content) {
       this.display(name);
     } else {
-      this.getPost(name);
+      this.fetchPost(name);
     }
   }
 
-  getPost(name: string) {
+  fetchPost(name: string) {
     this.loadingPost = true;
     axios
       .get(`content/${name}`)
       .then(response => {
-        this.convert(this.map.get(name), response.data);
+        this.convert(this.manager.getPost(name), response.data);
         this.display(name);
       })
       .catch(error => {
-        const post = new PostInfo();
+        const post = new PostInfo("");
         post.error = error.message;
-        this.map[name] = post;
+        this.manager.setPost(name, post);
       })
       .finally(() => (this.loadingPost = false));
-  }
-
-  // name eg. test/test==========2020-03-18
-  showName(name: string) {
-    return name.split(this.SPLITER)[0].replace("-", " ");
   }
 
   convert(post: PostInfo | undefined, data: string) {
     if (!post) {
       return;
     }
-    const splited = data.split(this.SPLITER);
+    const splited = data.split(PostManager.SPLITER);
     let contentData: string;
     if (splited.length === 1) {
       contentData = splited[0];
     } else {
       contentData = splited[1];
       const metadata = JSON.parse(splited[0]);
-      if (metadata.title) {
-        post.title = metadata.title;
-      }
-      if (metadata.date) {
-        post.date = metadata.date;
-      }
+      post.title = metadata.title;
+      post.subtitle = metadata.subtitle;
+      post.date = metadata.date;
     }
     const content = this.converter.makeHtml(contentData);
     post.content = content;
   }
 
   display(name: string) {
-    const post = this.map.get(name);
+    const post = this.manager.getPost(name);
     if (post) {
       const postModule = this.$refs.post;
       if (postModule instanceof Post) {

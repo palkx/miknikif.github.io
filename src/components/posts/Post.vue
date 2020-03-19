@@ -1,8 +1,9 @@
 <template>
   <div class="loading">
     <div align="start" v-if="!loading">
-      <h1>{{ title }}</h1>
-      <h4 class="primary--text">{{ date }}</h4>
+      <h1 v-if="title">{{ title }}</h1>
+      <h3 v-if="subtitle">{{ subtitle }}</h3>
+      <h4 v-if="date" class="primary--text">{{ date }}</h4>
       <v-divider v-if="content"></v-divider>
       <div v-html="content" class="mt-4 pa-2"></div>
     </div>
@@ -20,8 +21,9 @@ import Loading from "@/components/Loading.vue";
 })
 export default class Post extends Vue {
   @Prop({ default: false }) loading!: boolean;
-  private title: string | null = "";
-  private date: string | null = "";
+  private title: string | undefined;
+  private subtitle: string | undefined;
+  private date: string | undefined;
   private content: string | HTMLElement = "";
 
   errorTitle(): string {
@@ -35,6 +37,7 @@ export default class Post extends Vue {
   setPost(post: PostInfo) {
     this.content = post.content;
     this.title = post.title;
+    this.subtitle = post.subtitle;
     this.date = post.date;
   }
 }

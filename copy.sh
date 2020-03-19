@@ -11,7 +11,7 @@ do
   echo "$string"
   echo "$string" >> all
   mkdir $string
-  cp $i $string/index.html
+  mv $i $string/index.html
 done
 mkdir allposts
 mv all allposts/index.html
