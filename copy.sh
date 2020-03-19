@@ -9,8 +9,8 @@ do
   echo "$i"
   echo "${i%.md}" >> all
   mkdir ${i%.md}
-  mv $i ${i%.md}/index.html
+  mv $i ${i%.md}/index.txt
 done
 mkdir allposts
-mv all allposts/index.html
+mv all allposts/index.txt
 cd ../../
