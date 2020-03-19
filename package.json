@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "copy": "ls content | grep .md > content/all && mkdir dist/posts/ && cp -r content/*.md dist/posts/",
+    "copy": "./copy.sh",
     "build": "vue-cli-service build && npm run copy",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"

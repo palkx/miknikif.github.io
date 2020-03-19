@@ -1,5 +1,5 @@
 ---
-title: The way to show all posts.
+title: The way to show all posts
 date: 2020-03-18
 ---
 ## The way I thought to show the posts
