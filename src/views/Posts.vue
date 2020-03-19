@@ -8,34 +8,51 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import Post from "@/components/posts/Post.vue";
+import PostInfo from "@/components/posts/PostInfo.ts";
 import showdown from "showdown";
 import axios from "axios";
 
-@Component
-export default class Post extends Vue {
+@Component({
+  components: { Post }
+})
+export default class Posts extends Vue {
   private converter = new showdown.Converter({ metadata: true });
   private content: HTMLElement | string | null = null;
   private metadata: Record<string, string> | null = null;
-  private data;
+  private list: Record<string, PostInfo | null> = {};
   private title: string | null = null;
   private date: string | null = null;
+  private loadingList = true;
 
   mounted() {
-    axios
-      .get("posts/create-blog")
-      .then(response => {
-        this.data = response.data;
-        // console.log(this.data.split("\n"));
-        this.convert();
-      })
-      .catch(error => {
-        this.title = "Cannot load posts.";
-        this.content = `<h2>${error.message}.</h2>`;
-      });
+    this.getAllPosts();
   }
 
-  convert() {
-    this.content = this.converter.makeHtml(this.data);
+  getAllPosts() {
+    axios
+      .get("posts/allposts")
+      .then(response => {
+        for (const name of response.data.split("\n")) {
+          if (name != "") {
+            this.list[name] = null;
+          }
+        }
+        console.log(this.list);
+      })
+      .catch(error => {
+        this.title = "Cannot load post.";
+        this.content = `<h2>${error.message}.</h2>`;
+      })
+      .finally(() => (this.loadingList = false));
+  }
+
+  showName(name: string) {
+    return name.replace("-", " ");
+  }
+
+  convert(data: string) {
+    this.content = this.converter.makeHtml(data);
     this.metadata = this.converter.getMetadata();
     if (this.metadata) {
       if (this.metadata.title) {
