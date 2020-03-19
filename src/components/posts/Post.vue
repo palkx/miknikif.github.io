@@ -1,11 +1,11 @@
 <template>
   <div>
-    <h1>content</h1>
-    <div align="start">
+    <div align="start" v-if="!loading">
       <h1>{{ title }}</h1>
-      <h3>{{ date }}</h3>
+      <h4 class="primary--text">{{ date }}</h4>
       <div v-html="content"></div>
     </div>
+    <div v-else>loading</div>
   </div>
 </template>
 
