@@ -1,6 +1,7 @@
 mkdir dist/content
-cp -r content/ dist/content/
-cd dist/content/
+cd content/
+cp -r . ../dist/posts/
+cd ../dist/content/
 
 prefix="./"
 suffix=".md"
