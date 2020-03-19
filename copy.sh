@@ -1,6 +1,6 @@
 mkdir dist/content
 cd content/
-cp -r . ../dist/posts/
+cp -r . ../dist/content/
 cd ../dist/content/
 
 prefix="./"
