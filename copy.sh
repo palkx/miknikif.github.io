@@ -1,10 +1,10 @@
-mkdir dist/content/
+mkdir dist/content
+cp -r content/ dist/content/
 cd dist/content/
 
-rm all
-prefix="../../content/"
+prefix="./"
 suffix=".md"
-for i in $(ls -ct $prefix*$suffix)
+for i in $(find . -name '*.md' -print)
 do
   string=${i#$prefix}
   string=${string%$suffix}

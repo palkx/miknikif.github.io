@@ -1,5 +1,5 @@
 <template>
-  <v-container class="px-2 mb-5 py-0" style="min-width: 500px; height:100%">
+  <v-container class="px-2 mb-5 py-0" style="min-width: 300px; height:100%">
     <v-row
       v-if="!loadingList"
       class="flex-nowrap"
@@ -102,8 +102,9 @@ export default class Posts extends Vue {
       .finally(() => (this.loadingPost = false));
   }
 
+  // name eg. test/test==========2020-03-18
   showName(name: string) {
-    return name.replace("-", " ");
+    return name.split(this.SPLITER)[0].replace("-", " ");
   }
 
   convert(post: PostInfo | undefined, data: string) {
