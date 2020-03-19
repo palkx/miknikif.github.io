@@ -6,20 +6,19 @@
       no-gutters
       style="height:100%"
     >
-      <div class="col-2 ma-2">
-        <v-list>
-          <v-list-item-group v-model="selected">
-            <v-list-item
-              color="primary"
-              v-for="post in map.keys()"
-              :key="post"
-              @click="showPost(post)"
-            >
-              <v-list-item-title>{{ showName(post) }}</v-list-item-title>
-            </v-list-item>
-          </v-list-item-group>
-        </v-list>
-      </div>
+      <v-divider vertical></v-divider>
+      <v-list class="col-2 ma-2">
+        <v-list-item-group v-model="selected">
+          <v-list-item
+            color="primary"
+            v-for="post in map.keys()"
+            :key="post"
+            @click="showPost(post)"
+          >
+            <v-list-item-title>{{ showName(post) }}</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
+      </v-list>
       <v-divider vertical></v-divider>
       <post ref="post" class="col-10 ma-2 pa-2" :loading="loadingPost"></post>
     </v-row>

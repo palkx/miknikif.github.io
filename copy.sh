@@ -4,7 +4,6 @@ cd dist/content/
 rm all
 prefix="../../content/"
 suffix=".md"
-echo "$prefix*$suffix"
 for i in $(ls -ct $prefix*$suffix)
 do
   string=${i#$prefix}
