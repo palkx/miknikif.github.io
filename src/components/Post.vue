@@ -22,9 +22,10 @@ export default class Post extends Vue {
 
   mounted() {
     axios
-      .get("posts/create-blog.md")
+      .get("posts/allposts")
       .then(response => {
         this.data = response.data;
+        console.log(this.data);
         this.convert();
       })
       .catch(error => {
