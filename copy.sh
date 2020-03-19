@@ -1,7 +1,7 @@
-mkdir dist/posts/
+mkdir dist/content/
 cd content/
-cp -r . ../dist/posts/
-cd ../dist/posts/
+cp -r . ../dist/content/
+cd ../dist/content/
 
 rm all
 for i in *.md

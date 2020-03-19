@@ -5,6 +5,12 @@ Vue.use(VueRouter);
 
 const routes = [
   {
+    path: "/",
+    name: "2048",
+    component: () =>
+      import(/* webpackChunkName: "2048" */ "../views/Game2048.vue")
+  },
+  {
     path: "/about",
     name: "About",
     // route level code-splitting
@@ -22,12 +28,6 @@ const routes = [
     path: "/posts",
     name: "posts",
     component: () => import(/* webpackChunkName: "todo" */ "../views/Posts.vue")
-  },
-  {
-    path: "/",
-    name: "2048",
-    component: () =>
-      import(/* webpackChunkName: "2048" */ "../views/Game2048.vue")
   }
 ];
 

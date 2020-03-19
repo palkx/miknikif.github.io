@@ -1,9 +1,20 @@
 <template>
-  <div align="start">
-    <h1>{{ title }}</h1>
-    <h3>{{ date }}</h3>
-    <div v-html="content"></div>
-  </div>
+  <v-row v-if="!loadingList">
+    <div col-3>
+      <v-btn @click="getAllPosts">Reload</v-btn>
+      <v-list>
+        <v-list-item
+          v-for="post in map.keys()"
+          :key="post"
+          @click="showPost(post)"
+        >
+          <v-list-item-title>{{ showName(post) }}</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </div>
+    <post ref="post" col-9></post>
+  </v-row>
+  <div v-else>Loading</div>
 </template>
 
 <script lang="ts">
@@ -17,12 +28,9 @@ import axios from "axios";
   components: { Post }
 })
 export default class Posts extends Vue {
+  private SPLITER = "==========";
   private converter = new showdown.Converter({ metadata: true });
-  private content: HTMLElement | string | null = null;
-  private metadata: Record<string, string> | null = null;
-  private list: Record<string, PostInfo | null> = {};
-  private title: string | null = null;
-  private date: string | null = null;
+  private map: Map<string, PostInfo> = new Map();
   private loadingList = true;
 
   mounted() {
@@ -31,18 +39,40 @@ export default class Posts extends Vue {
 
   getAllPosts() {
     axios
-      .get("posts/allposts")
+      .get("content/allposts")
       .then(response => {
         for (const name of response.data.split("\n")) {
           if (name != "") {
-            this.list[name] = null;
+            this.map.set(name, new PostInfo());
           }
         }
-        console.log(this.list);
       })
       .catch(error => {
-        this.title = "Cannot load post.";
-        this.content = `<h2>${error.message}.</h2>`;
+        console.log(error.message);
+      })
+      .finally(() => (this.loadingList = false));
+  }
+
+  showPost(name: string) {
+    const post = this.map.get(name);
+    if (!post || post.error == null) {
+      this.getPost(name);
+    } else {
+      this.display(name);
+    }
+  }
+
+  getPost(name: string) {
+    axios
+      .get(`content/${name}`)
+      .then(response => {
+        this.convert(this.map.get(name), response.data);
+        this.display(name);
+      })
+      .catch(error => {
+        const post = new PostInfo();
+        post.error = error.message;
+        this.map[name] = post;
       })
       .finally(() => (this.loadingList = false));
   }
@@ -51,15 +81,21 @@ export default class Posts extends Vue {
     return name.replace("-", " ");
   }
 
-  convert(data: string) {
-    this.content = this.converter.makeHtml(data);
-    this.metadata = this.converter.getMetadata();
-    if (this.metadata) {
-      if (this.metadata.title) {
-        this.title = this.metadata.title;
-      }
-      if (this.metadata.date) {
-        this.date = this.metadata.date;
+  // TODO split metadata
+  convert(post: PostInfo | undefined, data: string) {
+    if (!post) {
+      return;
+    }
+    const content = this.converter.makeHtml(data);
+    post.content = content;
+  }
+
+  display(name: string) {
+    const post = this.map.get(name);
+    if (post) {
+      const postModule = this.$refs.post;
+      if (postModule instanceof Post) {
+        postModule.setPost(post);
       }
     }
   }

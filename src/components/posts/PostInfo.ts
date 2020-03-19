@@ -1,8 +1,6 @@
 export default class PostInfo {
-
-  constructor(
-    public title: string | null,
-    public date: string | null,
-    public content: HTMLElement,
-  ) {}
+  public error: string | null = null;
+  public title: string | null = "";
+  public date: string | null = "";
+  public content: HTMLElement | string = "";
 }
