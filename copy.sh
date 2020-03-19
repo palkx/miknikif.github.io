@@ -8,6 +8,6 @@ do
   echo "$i"
   echo "${i%.md}" >> allposts
   mkdir ${i%.md}
-  mv $i ${i%.md}/index.md
+  mv $i ${i%.md}/index.html
 done
 cd ../../
