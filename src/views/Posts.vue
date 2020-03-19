@@ -5,7 +5,7 @@
     no-gutters
     style="height:100%"
   >
-    <div class="col-3 ma-2">
+    <div class="col-2 ma-2">
       <v-list>
         <v-list-item-group v-model="selected">
           <v-list-item
@@ -20,20 +20,24 @@
       </v-list>
     </div>
     <v-divider vertical></v-divider>
-    <post ref="post" class="col-9 ma-2 pa-2" :loading="loadingPost"></post>
+    <post ref="post" class="col-10 ma-2 pa-2" :loading="loadingPost"></post>
   </v-row>
-  <div v-else>Loading</div>
+  <loading v-else class="full"></loading>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Post from "@/components/posts/Post.vue";
 import PostInfo from "@/components/posts/PostInfo.ts";
+import Loading from "@/components/Loading.vue";
 import showdown from "showdown";
 import axios from "axios";
 
 @Component({
-  components: { Post }
+  components: {
+    Post,
+    Loading
+  }
 })
 export default class Posts extends Vue {
   private SPLITER = "==========";

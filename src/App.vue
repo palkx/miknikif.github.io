@@ -49,4 +49,9 @@ export default Vue.extend({
 .no_highlighting {
   user-select: none;
 }
+
+.full {
+  width: 100%;
+  height: 100%;
+}
 </style>
