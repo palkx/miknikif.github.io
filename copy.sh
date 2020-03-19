@@ -1,15 +1,18 @@
 mkdir dist/content/
-cd content/
-cp -r . ../dist/content/
-cd ../dist/content/
+cd dist/content/
 
 rm all
-for i in *.md
+prefix="../../content/"
+suffix=".md"
+echo "$prefix*$suffix"
+for i in $(ls -ct $prefix*$suffix)
 do
-  echo "$i"
-  echo "${i%.md}" >> all
-  mkdir ${i%.md}
-  mv $i ${i%.md}/index.html
+  string=${i#$prefix}
+  string=${string%$suffix}
+  echo "$string"
+  echo "$string" >> all
+  mkdir $string
+  cp $i $string/index.html
 done
 mkdir allposts
 mv all allposts/index.html

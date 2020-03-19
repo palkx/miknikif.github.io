@@ -1,28 +1,30 @@
 <template>
-  <v-row
-    v-if="!loadingList"
-    class="flex-nowrap pa-2"
-    no-gutters
-    style="height:100%"
-  >
-    <div class="col-2 ma-2">
-      <v-list>
-        <v-list-item-group v-model="selected">
-          <v-list-item
-            color="primary"
-            v-for="post in map.keys()"
-            :key="post"
-            @click="showPost(post)"
-          >
-            <v-list-item-title>{{ showName(post) }}</v-list-item-title>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list>
-    </div>
-    <v-divider vertical></v-divider>
-    <post ref="post" class="col-10 ma-2 pa-2" :loading="loadingPost"></post>
-  </v-row>
-  <loading v-else class="full"></loading>
+  <v-container class="px-2 mb-5 py-0" style="min-width: 500px; height:100%">
+    <v-row
+      v-if="!loadingList"
+      class="flex-nowrap"
+      no-gutters
+      style="height:100%"
+    >
+      <div class="col-2 ma-2">
+        <v-list>
+          <v-list-item-group v-model="selected">
+            <v-list-item
+              color="primary"
+              v-for="post in map.keys()"
+              :key="post"
+              @click="showPost(post)"
+            >
+              <v-list-item-title>{{ showName(post) }}</v-list-item-title>
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+      </div>
+      <v-divider vertical></v-divider>
+      <post ref="post" class="col-10 ma-2 pa-2" :loading="loadingPost"></post>
+    </v-row>
+    <loading v-else class="full"></loading>
+  </v-container>
 </template>
 
 <script lang="ts">
