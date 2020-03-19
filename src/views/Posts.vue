@@ -1,17 +1,26 @@
 <template>
-  <v-row v-if="!loadingList" class="flex-nowrap pa-2" no-gutters>
+  <v-row
+    v-if="!loadingList"
+    class="flex-nowrap pa-2"
+    no-gutters
+    style="height:100%"
+  >
     <div class="col-3 ma-2">
       <v-list>
-        <v-list-item
-          v-for="post in map.keys()"
-          :key="post"
-          @click="showPost(post)"
-        >
-          <v-list-item-title>{{ showName(post) }}</v-list-item-title>
-        </v-list-item>
+        <v-list-item-group v-model="selected">
+          <v-list-item
+            color="primary"
+            v-for="post in map.keys()"
+            :key="post"
+            @click="showPost(post)"
+          >
+            <v-list-item-title>{{ showName(post) }}</v-list-item-title>
+          </v-list-item>
+        </v-list-item-group>
       </v-list>
     </div>
-    <post ref="post" class="col-9 ma-2" :loading="loadingPost"></post>
+    <v-divider vertical></v-divider>
+    <post ref="post" class="col-9 ma-2 pa-2" :loading="loadingPost"></post>
   </v-row>
   <div v-else>Loading</div>
 </template>
@@ -28,10 +37,20 @@ import axios from "axios";
 })
 export default class Posts extends Vue {
   private SPLITER = "==========";
-  private converter = new showdown.Converter({ metadata: true });
+  private converter = new showdown.Converter({
+    metadata: true,
+    noHeaderId: true,
+    simplifiedAutoLink: true,
+    excludeTrailingPunctuationFromURLs: true,
+    strikethrough: true,
+    tables: true,
+    tasklists: true,
+    simpleLineBreaks: true
+  });
   private map: Map<string, PostInfo> = new Map();
   private loadingList = true;
   private loadingPost = false;
+  private selected = "";
 
   mounted() {
     this.getAllPosts();
@@ -87,21 +106,12 @@ export default class Posts extends Vue {
       return;
     }
     const splited = data.split(this.SPLITER);
-    console.log(splited);
     let contentData: string;
     if (splited.length === 1) {
       contentData = splited[0];
     } else {
       contentData = splited[1];
-      console.log(splited[0]);
-      try {
-        console.log(JSON.parse(splited[0]));
-      } catch (e) {
-        console.log(e);
-      }
-
       const metadata = JSON.parse(splited[0]);
-      console.log(metadata);
       if (metadata.title) {
         post.title = metadata.title;
       }
@@ -111,7 +121,6 @@ export default class Posts extends Vue {
     }
     const content = this.converter.makeHtml(contentData);
     post.content = content;
-    console.log(post);
   }
 
   display(name: string) {
