@@ -33,8 +33,8 @@ export default Vue.extend({
 
   mounted() {
     const theme = localStorage.themeDark;
-    if (theme) {
-      this.$vuetify.theme.dark = theme;
+    if (theme === "true") {
+      this.$vuetify.theme.dark = true;
     }
   },
   data: () => ({

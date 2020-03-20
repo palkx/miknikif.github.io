@@ -7,7 +7,6 @@
     <v-btn
       rounded
       color="primary"
-      dark
       class="ma-2"
       href="https://github.com/nestorm001/nestorm001.github.io"
       target="_blank"
