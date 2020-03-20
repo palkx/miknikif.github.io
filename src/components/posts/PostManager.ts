@@ -46,7 +46,24 @@ export default class PostManager {
     return splited[splited.length === 1 ? 0 : 1];
   }
 
+  groupName(fullName: string): string {
+    const splited = this.splitedNames(fullName);
+    return splited.length === 1 ? "" : splited[0];
+  }
+
   keys(): IterableIterator<string> {
     return this.map.keys();
+  }
+
+  value(key: string, subkey: string | undefined = undefined): Post | Map<string, Post> | undefined {
+    if (subkey) {
+      const map = this.map.get(key)
+      if (map instanceof Map) {
+        return map.get(subkey);
+      }
+    } else {
+      return this.map.get(key);
+    }
+    return;
   }
 }

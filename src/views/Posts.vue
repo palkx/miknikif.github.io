@@ -8,16 +8,30 @@
     >
       <v-divider vertical></v-divider>
       <v-list class="col-2 ma-2">
-        <v-list-item-group v-model="selected">
+        <div v-for="name in manager.keys()" :key="name">
+          <v-list-group v-if="isGroup(name)">
+            <template v-slot:activator>
+              <v-list-item-content>
+                <v-list-item-title>{{ name }}</v-list-item-title>
+              </v-list-item-content>
+            </template>
+            <v-list-item
+              color="primary"
+              v-for="subname in manager.value(name).keys()"
+              @click="showPost(manager.value(name, subname))"
+              :key="subname + 'sub'"
+            >
+              <v-list-item-title>{{ subname }}</v-list-item-title>
+            </v-list-item>
+          </v-list-group>
           <v-list-item
+            v-else
             color="primary"
-            v-for="post in list"
-            :key="post"
-            @click="showPost(post)"
+            @click="showPost(manager.value(name))"
           >
-            <v-list-item-title>{{ manager.showName(post) }}</v-list-item-title>
+            <v-list-item-title>{{ name }}</v-list-item-title>
           </v-list-item>
-        </v-list-item-group>
+        </div>
       </v-list>
       <v-divider vertical></v-divider>
       <post ref="post" class="col-10 ma-2 pa-2" :loading="loadingPost"></post>
@@ -54,10 +68,8 @@ export default class Posts extends Vue {
   });
 
   private manager = new PostManager();
-  private list: string[] = [];
   private loadingList = true;
   private loadingPost = false;
-  private selected = "";
 
   mounted() {
     this.getAllPosts();
@@ -69,7 +81,6 @@ export default class Posts extends Vue {
       .then(response => {
         for (const name of response.data.split("\n")) {
           if (name != "") {
-            this.list.push(name);
             this.manager.setPost(name, new PostInfo(name));
           }
         }
@@ -80,27 +91,24 @@ export default class Posts extends Vue {
       .finally(() => (this.loadingList = false));
   }
 
-  showPost(name: string) {
-    const post = this.manager.getPost(name);
+  showPost(post: PostInfo) {
     if (post && post.content) {
-      this.display(name);
+      this.display(post);
     } else {
-      this.fetchPost(name);
+      this.fetchPost(post);
     }
   }
 
-  fetchPost(name: string) {
+  fetchPost(post: PostInfo) {
     this.loadingPost = true;
     axios
-      .get(`content/${name}`)
+      .get(`content/${post.fullName}`)
       .then(response => {
-        this.convert(this.manager.getPost(name), response.data);
-        this.display(name);
+        this.convert(post, response.data);
+        this.display(post);
       })
       .catch(error => {
-        const post = new PostInfo("");
         post.error = error.message;
-        this.manager.setPost(name, post);
       })
       .finally(() => (this.loadingPost = false));
   }
@@ -124,14 +132,17 @@ export default class Posts extends Vue {
     post.content = content;
   }
 
-  display(name: string) {
-    const post = this.manager.getPost(name);
+  display(post: PostInfo) {
     if (post) {
       const postModule = this.$refs.post;
       if (postModule instanceof Post) {
         postModule.setPost(post);
       }
     }
+  }
+
+  isGroup(name: string): boolean {
+    return this.manager.value(name) instanceof Map;
   }
 }
 </script>
