@@ -55,9 +55,12 @@ export default class PostManager {
     return this.map.keys();
   }
 
-  value(key: string, subkey: string | undefined = undefined): Post | Map<string, Post> | undefined {
+  value(
+    key: string,
+    subkey: string | undefined = undefined
+  ): Post | Map<string, Post> | undefined {
     if (subkey) {
-      const map = this.map.get(key)
+      const map = this.map.get(key);
       if (map instanceof Map) {
         return map.get(subkey);
       }

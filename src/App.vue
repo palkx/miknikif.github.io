@@ -31,6 +31,12 @@ import Vue from "vue";
 export default Vue.extend({
   name: "App",
 
+  mounted() {
+    const theme = localStorage.themeDark;
+    if (theme) {
+      this.$vuetify.theme.dark = theme;
+    }
+  },
   data: () => ({
     activeTab: "/",
     tabs: [

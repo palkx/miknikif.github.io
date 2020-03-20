@@ -22,6 +22,7 @@
       target="_blank"
       >my github</v-btn
     >
+    <v-switch class="top-left" label="Dark Mode" v-model="value"></v-switch>
   </div>
 </template>
 
@@ -39,5 +40,22 @@ export default class About extends Vue {
       this.clickCount = 0;
     }
   }
+
+  get value(): boolean {
+    return this.$vuetify.theme.dark;
+  }
+
+  set value(v) {
+    this.$vuetify.theme.dark = v;
+    localStorage.themeDark = v;
+  }
 }
 </script>
+
+<style lang="scss">
+.top-left {
+  position: absolute;
+  top: 0;
+  left: 16px;
+}
+</style>
