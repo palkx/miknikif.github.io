@@ -1,43 +1,56 @@
 <template>
-  <v-container class="px-2 mb-5 py-0" style="min-width: 300px; height:100%">
-    <v-row
-      v-if="!loadingList"
-      class="flex-nowrap"
-      no-gutters
-      style="height:100%"
-    >
-      <v-divider vertical></v-divider>
-      <v-list class="col-2 ma-2">
-        <div v-for="name in manager.keys()" :key="name">
-          <v-list-group v-if="isGroup(name)">
-            <template v-slot:activator>
-              <v-list-item-content>
-                <v-list-item-title>{{ name }}</v-list-item-title>
-              </v-list-item-content>
-            </template>
-            <v-list-item
-              color="primary"
-              v-for="subname in manager.value(name).keys()"
-              @click="showPost(manager.value(name, subname))"
-              :key="subname + 'sub'"
+  <v-row
+    v-if="!loadingList"
+    class="flex-nowrap px-2 mb-5 py-0"
+    no-gutters
+    style="height:100%"
+  >
+    <v-list class="col-2">
+      <v-subheader>POSTS</v-subheader>
+      <v-list-item-group v-model="itemValue" color="primary">
+        <v-divider></v-divider>
+        <template v-for="name in manager.keys()">
+          <div :key="name">
+            <v-list-group
+              v-if="isGroup(name)"
+              no-action
+              append-icon="mdi-menu-down"
             >
-              <v-list-item-title>{{ subname }}</v-list-item-title>
+              <template v-slot:activator>
+                <v-list-item-content class="text-no-wrap">{{
+                  name
+                }}</v-list-item-content>
+              </template>
+              <v-list-item
+                class="px-4"
+                color="primary"
+                v-for="subname in manager.value(name).keys()"
+                @click="showPost(manager.value(name, subname))"
+                :key="subname + 'sub'"
+              >
+                <v-list-item-content class="text-no-wrap">{{
+                  subname
+                }}</v-list-item-content>
+              </v-list-item>
+            </v-list-group>
+            <v-list-item
+              class="px-4"
+              v-else
+              color="primary"
+              @click="showPost(manager.value(name))"
+              ><v-list-item-content class="text-no-wrap">{{
+                name
+              }}</v-list-item-content>
             </v-list-item>
-          </v-list-group>
-          <v-list-item
-            v-else
-            color="primary"
-            @click="showPost(manager.value(name))"
-          >
-            <v-list-item-title>{{ name }}</v-list-item-title>
-          </v-list-item>
-        </div>
-      </v-list>
-      <v-divider vertical></v-divider>
-      <post ref="post" class="col-10 ma-2 pa-2" :loading="loadingPost"></post>
-    </v-row>
-    <loading v-else class="full"></loading>
-  </v-container>
+            <v-divider class="mx-2"></v-divider>
+          </div>
+        </template>
+      </v-list-item-group>
+    </v-list>
+    <v-divider vertical></v-divider>
+    <post ref="post" class="col-10 ma-2 pa-2" :loading="loadingPost"></post>
+  </v-row>
+  <loading v-else class="full"></loading>
 </template>
 
 <script lang="ts">
@@ -70,6 +83,7 @@ export default class Posts extends Vue {
   private manager = new PostManager();
   private loadingList = true;
   private loadingPost = false;
+  private itemValue = "";
 
   mounted() {
     this.getAllPosts();
