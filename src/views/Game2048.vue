@@ -1,6 +1,6 @@
 <template>
   <v-container
-    class="px-2 mb-5 py-0"
+    class="px-2 my-5 py-0"
     style="max-width: 600px;  min-width: 300px; "
   >
     <v-row no-gutters class="px-3">

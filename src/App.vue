@@ -2,17 +2,22 @@
   <v-app>
     <v-app-bar app color="primary" light hide-on-scroll>
       <v-tabs v-model="activeTab" color="white">
-        <v-tab v-for="tab in tabs" :key="tab.name" :to="tab.route">
+        <v-tab
+          v-for="tab in tabs"
+          :key="tab.name"
+          :to="tab.route"
+          class="white--text"
+        >
           {{ tab.name }}
         </v-tab>
         <v-spacer></v-spacer>
-        <v-tab :to="last.route">
+        <v-tab :to="last.route" class="white--text">
           {{ last.name }}
         </v-tab>
       </v-tabs>
     </v-app-bar>
 
-    <v-content class="mt-5">
+    <v-content>
       <keep-alive>
         <router-view />
       </keep-alive>

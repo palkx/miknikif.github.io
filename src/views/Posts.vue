@@ -1,54 +1,60 @@
 <template>
   <v-row
     v-if="!loadingList"
-    class="flex-nowrap px-2 mb-5 py-0"
+    class="flex-nowrap pe-2 py-0 justify-center"
     no-gutters
     style="height:100%"
   >
-    <v-list class="col-2">
-      <v-subheader>POSTS</v-subheader>
-      <v-list-item-group v-model="itemValue" color="primary">
-        <v-divider></v-divider>
-        <template v-for="name in manager.keys()">
-          <div :key="name">
-            <v-list-group
-              v-if="isGroup(name)"
-              no-action
-              append-icon="mdi-menu-down"
-            >
-              <template v-slot:activator>
-                <v-list-item-content class="text-no-wrap">{{
-                  name
-                }}</v-list-item-content>
-              </template>
+    <v-navigation-drawer
+      absolute
+      permanent
+      expand-on-hover
+      color="primary"
+      width="300px"
+    >
+      <v-list>
+        <v-subheader class="white--text">POSTS</v-subheader>
+        <v-list-item-group v-model="itemValue" mandatory color="black">
+          <v-divider></v-divider>
+          <template v-for="name in manager.keys()">
+            <div :key="name">
+              <v-list-group v-if="isGroup(name)" color="black">
+                <v-icon slot="appendIcon" color="white">mdi-menu-down</v-icon>
+                <template v-slot:activator>
+                  <v-list-item-content class="text-no-wrap white--text">{{
+                    name
+                  }}</v-list-item-content>
+                </template>
+                <v-list-item
+                  class="px-4"
+                  v-for="subname in manager.value(name).keys()"
+                  @click="showPost(manager.value(name, subname))"
+                  :key="subname + 'sub'"
+                >
+                  <v-list-item-content class="text-no-wrap white--text">{{
+                    subname
+                  }}</v-list-item-content>
+                </v-list-item>
+              </v-list-group>
               <v-list-item
                 class="px-4"
-                color="primary"
-                v-for="subname in manager.value(name).keys()"
-                @click="showPost(manager.value(name, subname))"
-                :key="subname + 'sub'"
-              >
-                <v-list-item-content class="text-no-wrap">{{
-                  subname
+                v-else
+                @click="showPost(manager.value(name))"
+                ><v-list-item-content class="text-no-wrap white--text">{{
+                  name
                 }}</v-list-item-content>
               </v-list-item>
-            </v-list-group>
-            <v-list-item
-              class="px-4"
-              v-else
-              color="primary"
-              @click="showPost(manager.value(name))"
-              ><v-list-item-content class="text-no-wrap">{{
-                name
-              }}</v-list-item-content>
-            </v-list-item>
-            <v-divider class="mx-2"></v-divider>
-          </div>
-        </template>
-      </v-list-item-group>
-    </v-list>
-    <v-divider vertical></v-divider>
-    <post ref="post" class="col-10 ma-2 pa-2" :loading="loadingPost"></post>
+              <v-divider class="mx-2"></v-divider>
+            </div>
+          </template>
+        </v-list-item-group>
+      </v-list>
+    </v-navigation-drawer>
+    <post
+      ref="post"
+      class="col-9 ms-12 me-2 my-5 pa-2"
+      :loading="loadingPost"
+    ></post>
   </v-row>
   <loading v-else class="full"></loading>
 </template>
@@ -84,6 +90,7 @@ export default class Posts extends Vue {
   private loadingList = true;
   private loadingPost = false;
   private itemValue = "";
+  private hasShowFirst = false;
 
   mounted() {
     this.getAllPosts();
@@ -96,6 +103,13 @@ export default class Posts extends Vue {
         for (const name of response.data.split("\n")) {
           if (name != "") {
             this.manager.setPost(name, new PostInfo(name));
+          }
+          if (!this.hasShowFirst) {
+            this.hasShowFirst = true;
+            const post = this.manager.getPost(name);
+            if (post) {
+              this.showPost(post);
+            }
           }
         }
       })

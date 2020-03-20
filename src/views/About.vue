@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="my-5">
     <h1>Hello</h1>
     <h2>Nothing here.</h2>
     <h2 v-ripple="{ center: true }" @click="click">I'm still learning.</h2>
