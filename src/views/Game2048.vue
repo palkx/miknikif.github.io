@@ -13,13 +13,13 @@
         id="open-menu"
         icon
         color="primary"
-        @click="showOptions = !showOptions"
+        @click.stop="showOptions = true"
         class="headline"
         ><v-icon>mdi-cog</v-icon>
       </v-btn>
     </v-row>
-    <transition name="fade">
-      <v-card v-if="showOptions" class="settings-content" id="menu">
+    <v-dialog v-model="showOptions" max-width="300px" hide-overlay>
+      <v-card>
         <v-btn
           rounded
           outlined
@@ -75,7 +75,7 @@
           Restart
         </v-btn>
       </v-card>
-    </transition>
+    </v-dialog>
 
     <board
       ref="board"
@@ -136,7 +136,6 @@ export default class Game2048 extends Vue {
   mounted() {
     addEventListener("beforeunload", this.saveData);
     addEventListener("keyup", this.keyMoniter);
-    this.closeMenuIfClickOutside();
     const board = this.$refs.board;
     if (board instanceof Board) {
       if (this.hasSaveData()) {
@@ -165,39 +164,6 @@ export default class Game2048 extends Vue {
     localStorage.removeItem("tiles");
     localStorage.removeItem("score");
     localStorage.removeItem("size");
-  }
-
-  containsElement(id: string, event: MouseEvent): boolean {
-    let target = event.target;
-    const element = document.getElementById(id);
-    do {
-      if (target == element) {
-        return true;
-      }
-      if (target instanceof HTMLElement) {
-        target = target.parentNode;
-      } else {
-        break;
-      }
-    } while (target);
-    return false;
-  }
-
-  closeMenuIfClickOutside() {
-    document.addEventListener("mouseup", event => {
-      // check not open menu button
-      if (this.containsElement("open-menu", event)) {
-        return;
-      }
-      // check is menu opening
-      if (!this.showOptions) {
-        return;
-      }
-      // close menu if click outside
-      if (!this.containsElement("menu", event)) {
-        this.showOptions = false;
-      }
-    });
   }
 
   destroyed() {
@@ -294,17 +260,6 @@ export default class Game2048 extends Vue {
   .arrow-controls {
     display: none;
   }
-}
-
-.settings-content {
-  display: block;
-  position: absolute;
-  padding: 10px 0;
-  width: 250px;
-  min-width: 200px;
-  right: 5%;
-  background-color: var(--v-white-base);
-  z-index: 1;
 }
 
 .settings-button {

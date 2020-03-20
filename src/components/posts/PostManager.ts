@@ -33,7 +33,7 @@ export default class PostManager {
         submap = new Map();
         this.map.set(slited[0], submap);
       }
-      submap.set(slited[1], post)
+      submap.set(slited[1], post);
     }
   }
 

@@ -3,7 +3,7 @@
     class="px-2 mb-5 py-0"
     style="max-width: 500px;  min-width: 200px; "
   >
-    <h2 class="display-1 success--text">
+    <h2 class="display-1 primary--text">
       Simple Todo
     </h2>
 
