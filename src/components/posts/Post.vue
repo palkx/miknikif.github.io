@@ -3,7 +3,7 @@
     <div align="start" v-if="!loading">
       <h1 v-if="title">{{ title }}</h1>
       <h3 v-if="subtitle">{{ subtitle }}</h3>
-      <h4 v-if="date" class="primary--text">{{ date }}</h4>
+      <h4 v-if="date" class="black-lighten4--text">{{ date }}</h4>
       <v-divider v-if="content"></v-divider>
       <div v-html="content" class="content mt-4 pa-2"></div>
       <div v-if="refs && refs.size > 0">

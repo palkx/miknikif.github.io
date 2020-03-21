@@ -9,17 +9,24 @@
       absolute
       permanent
       expand-on-hover
+      mini-variant
       color="primary"
       width="300px"
     >
       <v-list>
-        <v-subheader class="white--text">POSTS</v-subheader>
+        <v-row class="flex-nowrap ms-4" no-gutters>
+          <v-icon color="white">mdi-alpha-p-circle-outline</v-icon>
+          <v-subheader class="white--text">POSTS</v-subheader>
+        </v-row>
         <v-list-item-group v-model="itemValue" mandatory color="black">
           <v-divider></v-divider>
           <template v-for="name in manager.keys()">
             <div :key="name">
               <v-list-group v-if="isGroup(name)" color="black">
                 <v-icon slot="appendIcon" color="white">mdi-menu-down</v-icon>
+                <v-icon slot="prependIcon" color="white"
+                  >mdi-folder-outline</v-icon
+                >
                 <template v-slot:activator>
                   <v-list-item-content class="text-no-wrap white--text">{{
                     name
@@ -31,6 +38,9 @@
                   @click="showPost(manager.value(name, subname))"
                   :key="subname + 'sub'"
                 >
+                  <v-list-item-icon>
+                    <v-icon color="white">mdi-note-text-outline</v-icon>
+                  </v-list-item-icon>
                   <v-list-item-content class="text-no-wrap white--text">{{
                     subname
                   }}</v-list-item-content>
@@ -40,7 +50,11 @@
                 class="px-4"
                 v-else
                 @click="showPost(manager.value(name))"
-                ><v-list-item-content class="text-no-wrap white--text">{{
+              >
+                <v-list-item-icon>
+                  <v-icon color="white">mdi-note-text-outline</v-icon>
+                </v-list-item-icon>
+                <v-list-item-content class="text-no-wrap white--text">{{
                   name
                 }}</v-list-item-content>
               </v-list-item>
