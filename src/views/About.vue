@@ -2,7 +2,7 @@
   <div class="my-5">
     <h1>Hello</h1>
     <h2>Nothing here.</h2>
-    <h2 v-ripple="{ center: true }" @click="click">I'm still learning.</h2>
+    <h2 v-ripple @click="click">I'm still learning.</h2>
     <br />
     <v-btn
       rounded

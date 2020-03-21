@@ -12,7 +12,7 @@
         <ol>
           <li v-for="ref in refs.keys()" :key="ref">
             {{ refs.get(ref) }}
-            <a :href="ref"> {{ ref }}</a>
+            <a :href="ref" target="_blank"> {{ ref }}</a>
           </li>
         </ol>
       </div>
