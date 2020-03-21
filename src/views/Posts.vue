@@ -152,12 +152,22 @@ export default class Posts extends Vue {
     } else {
       contentData = splited[1];
       const metadata = JSON.parse(splited[0]);
-      post.title = metadata.title;
-      post.subtitle = metadata.subtitle;
-      post.date = metadata.date;
+      this.handleMetadata(post, metadata);
     }
     const content = this.converter.makeHtml(contentData);
     post.content = content;
+  }
+
+  handleMetadata(post: PostInfo, metadata) {
+    post.title = metadata.title;
+    post.subtitle = metadata.subtitle;
+    post.date = metadata.date;
+    if (metadata.refs) {
+      post.refs = new Map();
+      for (const key in metadata.refs) {
+        post.refs.set(key, metadata.refs[key]);
+      }
+    }
   }
 
   display(post: PostInfo) {

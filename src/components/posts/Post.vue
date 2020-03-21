@@ -6,6 +6,16 @@
       <h4 v-if="date" class="primary--text">{{ date }}</h4>
       <v-divider v-if="content"></v-divider>
       <div v-html="content" class="mt-4 pa-2"></div>
+      <div v-if="refs && refs.size > 0">
+        <v-divider></v-divider>
+        <h4 class="primary--text">参考链接</h4>
+        <ol>
+          <li v-for="ref in refs.keys()" :key="ref">
+            {{ refs.get(ref) }}
+            <a :href="ref"> {{ ref }}</a>
+          </li>
+        </ol>
+      </div>
     </div>
     <loading v-else class="full">loading</loading>
   </div>
@@ -25,6 +35,7 @@ export default class Post extends Vue {
   private subtitle: string | undefined;
   private date: string | undefined;
   private content: string | HTMLElement = "";
+  private refs: Map<string, string> | undefined;
 
   errorTitle(): string {
     return "Cannot load post.";
@@ -39,6 +50,7 @@ export default class Post extends Vue {
     this.title = post.title;
     this.subtitle = post.subtitle;
     this.date = post.date;
+    this.refs = post.refs;
   }
 }
 </script>
