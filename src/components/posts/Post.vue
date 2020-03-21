@@ -3,7 +3,7 @@
     <div align="start" v-if="!loading">
       <h1 v-if="title">{{ title }}</h1>
       <h3 v-if="subtitle">{{ subtitle }}</h3>
-      <h4 v-if="date" class="black-lighten4--text">{{ date }}</h4>
+      <h4 v-if="date">{{ date }}</h4>
       <v-divider v-if="content"></v-divider>
       <div v-html="content" class="content mt-4 pa-2"></div>
       <div v-if="refs && refs.size > 0">
@@ -65,13 +65,13 @@ export default class Post extends Vue {
     color: var(--v-primary-base);
   }
   >>> h4 {
-    color: var(--v-primary-darken1);
+    color: var(--v-primary-lighten1);
   }
   >>> h5 {
-    color: var(--v-primary-darken2);
+    color: var(--v-primary-lighten2);
   }
   >>> h6 {
-    color: var(--v-primary-darken3);
+    color: var(--v-primary-lighten3);
   }
   >>> strong {
     color: var(--v-accent-base);
@@ -82,8 +82,11 @@ export default class Post extends Vue {
     content: "";
   }
 }
-h1,
-h3 {
+h1 {
   color: var(--v-primary-base);
+}
+h3,
+h4 {
+  color: var(--v-primary-lighten1);
 }
 </style>

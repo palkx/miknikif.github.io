@@ -8,15 +8,15 @@ export default new Vuetify({
     themes: {
       light: {
         primary: "#1eba74",
-        accent: colors.orange.lighten2,
-        black: "#000000",
-        white: "#ffffff"
+        accent: "#ffab91",
+        black: "#333333",
+        white: "#f7f7f7"
       },
       dark: {
-        primary: "#009e5b",
-        accent: colors.orange.lighten2,
-        black: "#ffffff",
-        white: "#000000"
+        primary: "#008948",
+        accent: "#c97b63",
+        black: "#f7f7f7",
+        white: "#333333"
       }
     },
     options: {

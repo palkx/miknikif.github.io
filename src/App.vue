@@ -55,6 +55,7 @@ export default Vue.extend({
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: var(--v-black-base);
+  background-color: var(--v-white-base);
 }
 
 .no_highlighting {
