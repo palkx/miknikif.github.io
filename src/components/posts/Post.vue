@@ -5,7 +5,7 @@
       <h3 v-if="subtitle">{{ subtitle }}</h3>
       <h4 v-if="date" class="primary--text">{{ date }}</h4>
       <v-divider v-if="content"></v-divider>
-      <div v-html="content" class="mt-4 pa-2"></div>
+      <div v-html="content" class="content mt-4 pa-2"></div>
       <div v-if="refs && refs.size > 0">
         <v-divider></v-divider>
         <h4 class="primary--text">参考链接</h4>
@@ -54,3 +54,36 @@ export default class Post extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.content {
+  >>> h1,
+  >>> h2,
+  >>> h3 {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    color: var(--v-primary-base);
+  }
+  >>> h4 {
+    color: var(--v-primary-darken1);
+  }
+  >>> h5 {
+    color: var(--v-primary-darken2);
+  }
+  >>> h6 {
+    color: var(--v-primary-darken3);
+  }
+  >>> strong {
+    color: var(--v-accent-base);
+  }
+
+  >>> code::before,
+  >>> code::after {
+    content: "";
+  }
+}
+h1,
+h3 {
+  color: var(--v-primary-base);
+}
+</style>
