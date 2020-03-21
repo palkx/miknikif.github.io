@@ -6,7 +6,7 @@
     <v-row no-gutters class="px-3">
       <span class="mdi mdi-settings"></span>
       <span class="headline">
-        Score: <animated-int v-bind:value="score"></animated-int
+        Score: <animated-int :value="score"></animated-int
       ></span>
       <v-spacer></v-spacer>
       <v-btn
@@ -81,7 +81,7 @@
       ref="board"
       @game-over="gameOver"
       @score-changed="addScore"
-      v-bind:tile-color="color"
+      :tile-color="color"
     />
 
     <transition name="fade" mode="out-in">

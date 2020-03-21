@@ -4,13 +4,13 @@
       <tile
         class="tile"
         v-for="(tile, index) in tiles"
-        v-bind:ref="'tile-' + index"
-        v-bind:key="index"
-        v-bind:tile="tile"
-        v-bind:color="tileColor"
-        v-bind:font-scale="size"
+        :ref="'tile-' + index"
+        :key="index"
+        :tile="tile"
+        :color="tileColor"
+        :font-scale="size"
         @finish-moving="finishMoving"
-        v-bind:style="sizeStyle"
+        :style="sizeStyle"
       ></tile>
     </div>
   </v-responsive>

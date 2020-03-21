@@ -1,11 +1,11 @@
 <template>
   <div>
     <div
-      v-bind:id="'card-' + tile.index"
-      v-bind:style="backColor"
+      :id="'card-' + tile.index"
+      :style="backColor"
       class="number-container rounded-card elevation-5"
     >
-      <span v-bind:style="fontSize" class="number no_highlighting">{{
+      <span :style="fontSize" class="number no_highlighting">{{
         showText()
       }}</span>
     </div>
