@@ -243,15 +243,13 @@ export default class Board extends Vue {
   resetAndPutNew() {
     this.refreshTile();
 
-    setTimeout(() => {
-      const number = Math.round(Math.random() + 1);
-      this.putNumber(number);
-      this.animating = false;
-      if (this.isGameOver()) {
-        this.$emit("game-over");
-        this.gaming = false;
-      }
-    }, 100);
+    const number = Math.round(Math.random() + 1);
+    this.putNumber(number);
+    this.animating = false;
+    if (this.isGameOver()) {
+      this.$emit("game-over");
+      this.gaming = false;
+    }
   }
 
   refreshTile() {

@@ -128,6 +128,8 @@ import AnimatedInt from "@/components/AnimatedInt.vue";
 export default class Game2048 extends Vue {
   private tiles: TileInfo[] = [];
   private auto = false;
+  private autoList: string[] = [];
+  private intervalId: number | undefined;
   score = 0;
   gaming = true;
   color = "0x1eba74";
@@ -154,6 +156,19 @@ export default class Game2048 extends Vue {
       } else {
         board.createBoard(this.size);
       }
+    }
+    const actions = ["w", "a", "s", "d"];
+    this.intervalId = setInterval(() => {
+      if (this.auto && this.gaming) {
+        const next = actions[Math.floor(Math.random() * actions.length)];
+        this.move(next);
+      }
+    }, 100);
+  }
+
+  beforeDestroy() {
+    if (this.intervalId) {
+      window.clearInterval(this.intervalId);
     }
   }
 
