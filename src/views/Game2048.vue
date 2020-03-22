@@ -3,8 +3,9 @@
     class="px-2 my-5 py-0"
     style="max-width: 600px;  min-width: 300px; "
   >
-    <v-row no-gutters class="px-3">
-      <span class="mdi mdi-settings"></span>
+    <v-row no-gutters class="px-3 flex-nowrap align-center">
+      <v-switch label="Auto Mode" v-model="auto"></v-switch>
+      <v-spacer></v-spacer>
       <span class="headline">
         Score: <animated-int :value="score"></animated-int
       ></span>
@@ -82,6 +83,7 @@
       @game-over="gameOver"
       @score-changed="addScore"
       :tile-color="color"
+      :reduced-animation="auto"
     />
 
     <transition name="fade" mode="out-in">
@@ -125,6 +127,7 @@ import AnimatedInt from "@/components/AnimatedInt.vue";
 })
 export default class Game2048 extends Vue {
   private tiles: TileInfo[] = [];
+  private auto = false;
   score = 0;
   gaming = true;
   color = "0x1eba74";

@@ -50,11 +50,3 @@ export default class About extends Vue {
   }
 }
 </script>
-
-<style lang="scss">
-.top-left {
-  position: absolute;
-  top: 0;
-  left: 16px;
-}
-</style>

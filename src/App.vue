@@ -66,4 +66,10 @@ export default Vue.extend({
   width: 100%;
   height: 100%;
 }
+
+.top-left {
+  position: absolute;
+  top: 0;
+  left: 16px;
+}
 </style>
