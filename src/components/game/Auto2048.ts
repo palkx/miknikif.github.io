@@ -31,6 +31,7 @@ function moveScore(row: Tile[], needReverse: boolean): number {
   let previousIndex = 0;
   let score = 0;
   let changed = false;
+  
   for (let index = 1; index < array.length; index++) {
     if (array[index] === 0) continue;
     while (
@@ -46,8 +47,9 @@ function moveScore(row: Tile[], needReverse: boolean): number {
         array[previousIndex] = array[index];
       } else {
         array[previousIndex] += 1;
-        previousIndex++;
         score += Math.pow(2, array[previousIndex]);
+        previousIndex++;
+        
       }
       array[index] = 0;
       changed = true;
@@ -92,13 +94,22 @@ function score(tiles: Tile[], size: number, input: string): number {
 }
 
 class GreedyAuto implements Auto {
-  private map
+  private random;
   constructor(private tiles: Tile[], private size: number) {
-
+    this.random = new RandomAuto();
   }
 
   next(): string {
-    return "w"
+    let bestScore = -1;
+    let bestKey = this.random.next();
+    for (const key of DIRCETIONS) {
+      const s = score(this.tiles, this.size, key);
+      if (s > bestScore) {
+        bestScore = s;
+        bestKey = key;
+      }
+    }
+    return bestKey;
   }
 }
 
