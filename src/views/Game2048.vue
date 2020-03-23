@@ -118,6 +118,7 @@ import { Component, Vue } from "vue-property-decorator";
 import Board from "@/components/game/Board.vue";
 import TileInfo from "@/components/game/TileInfo.ts";
 import AnimatedInt from "@/components/AnimatedInt.vue";
+import Auto2048, { Algorithm } from "@/components/game/Auto2048.ts";
 
 @Component({
   components: {
@@ -128,8 +129,8 @@ import AnimatedInt from "@/components/AnimatedInt.vue";
 export default class Game2048 extends Vue {
   private tiles: TileInfo[] = [];
   private auto = false;
-  private autoList: string[] = [];
   private intervalId: number | undefined;
+  private auto2048!: Auto2048;
   score = 0;
   gaming = true;
   color = "0x1eba74";
@@ -156,14 +157,15 @@ export default class Game2048 extends Vue {
       } else {
         board.createBoard(this.size);
       }
+
+      this.auto2048 = new Auto2048(this.tiles, this.size, Algorithm.CLOCKWISE);
+      this.intervalId = setInterval(() => {
+        if (this.auto && this.gaming) {
+          const next = this.auto2048.next();
+          this.move(next);
+        }
+      }, 100);
     }
-    const actions = ["w", "a", "s", "d"];
-    this.intervalId = setInterval(() => {
-      if (this.auto && this.gaming) {
-        const next = actions[Math.floor(Math.random() * actions.length)];
-        this.move(next);
-      }
-    }, 100);
   }
 
   beforeDestroy() {
