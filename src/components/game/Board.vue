@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import Tile from "@/components/game/Tile.vue";
 import TileInfo from "@/components/game/TileInfo.ts";
 
@@ -34,9 +34,10 @@ export default class Board extends Vue {
   private tiles: TileInfo[] = [];
   private gaming = true;
   private animating = false;
+  private auto = this.reducedAnimation;
 
   mounted() {
-    addEventListener("keyup", this.keyMoniter);
+    this.moniterKey();
     const primary = this.$vuetify.theme.themes.light.primary;
     if (primary) {
       this.tileColor = "0x" + primary.toString().slice(-6);
@@ -49,7 +50,7 @@ export default class Board extends Vue {
   }
 
   destroyed() {
-    removeEventListener("keyup", this.keyMoniter);
+    this.unmoniterKey();
   }
 
   public createBoard(size: number = this.size) {
@@ -96,6 +97,13 @@ export default class Board extends Vue {
     }
   }
 
+  manualInputKey(key: string) {
+    if (this.auto) {
+      return;
+    }
+    this.handleKey(key);
+  }
+
   handleKey(key: string) {
     if (this.animating) {
       return;
@@ -124,7 +132,26 @@ export default class Board extends Vue {
         break;
     }
   }
-  public keyMoniter(event: Event) {
+
+  moniterKey() {
+    addEventListener("keyup", this.keyMonitor);
+  }
+
+  unmoniterKey() {
+    removeEventListener("keyup", this.keyMonitor);
+  }
+
+  @Watch("reducedAnimation")
+  onAutoChanged() {
+    this.auto = this.reducedAnimation;
+    if (this.auto) {
+      this.unmoniterKey();
+    } else {
+      this.moniterKey();
+    }
+  }
+
+  keyMonitor(event: Event) {
     if (!(event instanceof KeyboardEvent) || !this.gaming) return;
     this.handleKey(event.key);
   }

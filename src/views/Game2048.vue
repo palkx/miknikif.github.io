@@ -88,18 +88,18 @@
 
     <transition name="fade" mode="out-in">
       <div class="arrow-controls" v-if="gaming" key="game-control">
-        <v-btn rounded color="primary" class="ma-0" @click="move('w')">
+        <v-btn rounded color="primary" class="ma-0" @click="manualMove('w')">
           <v-icon>mdi-arrow-up-bold</v-icon>
         </v-btn>
         <br />
-        <v-btn rounded color="primary" class="ma-2" @click="move('a')">
+        <v-btn rounded color="primary" class="ma-2" @click="manualMove('a')">
           <v-icon>mdi-arrow-left-bold</v-icon>
         </v-btn>
-        <v-btn rounded color="primary" class="ma-2" @click="move('d')">
+        <v-btn rounded color="primary" class="ma-2" @click="manualMove('d')">
           <v-icon>mdi-arrow-right-bold</v-icon>
         </v-btn>
         <br />
-        <v-btn rounded color="primary" class="ma-0" @click="move('s')">
+        <v-btn rounded color="primary" class="ma-0" @click="manualMove('s')">
           <v-icon>mdi-arrow-down-bold</v-icon>
         </v-btn>
       </div>
@@ -141,7 +141,7 @@ export default class Game2048 extends Vue {
 
   mounted() {
     addEventListener("beforeunload", this.saveData);
-    addEventListener("keyup", this.keyMoniter);
+    addEventListener("keyup", this.keyMonitor);
     const board = this.$refs.board;
     if (board instanceof Board) {
       if (this.hasSaveData()) {
@@ -162,7 +162,7 @@ export default class Game2048 extends Vue {
       this.intervalId = setInterval(() => {
         if (this.auto && this.gaming) {
           const next = this.auto2048.next();
-          this.move(next);
+          this.autoMove(next);
         }
       }, 100);
     }
@@ -172,6 +172,7 @@ export default class Game2048 extends Vue {
     if (this.intervalId) {
       window.clearInterval(this.intervalId);
     }
+    removeEventListener("keyup", this.keyMonitor);
   }
 
   saveData() {
@@ -186,11 +187,7 @@ export default class Game2048 extends Vue {
     localStorage.removeItem("size");
   }
 
-  destroyed() {
-    removeEventListener("keyup", this.keyMoniter);
-  }
-
-  keyMoniter(event: Event) {
+  keyMonitor(event: Event) {
     if (!(event instanceof KeyboardEvent)) return;
     if (event.key === "Escape" && this.showOptions) {
       this.showOptions = false;
@@ -235,7 +232,13 @@ export default class Game2048 extends Vue {
     return "#" + this.color.slice(-6);
   }
 
-  move(key: string) {
+  manualMove(key: string) {
+    if (this.$refs.board instanceof Board) {
+      this.$refs.board.manualInputKey(key);
+    }
+  }
+
+  autoMove(key: string) {
     if (this.$refs.board instanceof Board) {
       this.$refs.board.handleKey(key);
     }
