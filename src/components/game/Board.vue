@@ -156,7 +156,7 @@ export default class Board extends Vue {
     this.handleKey(event.key);
   }
 
-  public move(isRow = true, moveToStart = false): boolean {
+  public move(isRow = true, needReverse = false): boolean {
     let changed = false;
     for (let index = 0; index < this.size; index++) {
       let array = this.tiles.filter(tile => {
@@ -166,14 +166,14 @@ export default class Board extends Vue {
           return tile.column === index;
         }
       });
-      if (moveToStart) array = array.reverse();
+      if (needReverse) array = array.reverse();
       changed = this.merge(array) || changed;
     }
     return changed;
   }
 
-  public moveAndCheck(isRow: boolean, moveToStart: boolean) {
-    this.animating = this.move(isRow, moveToStart);
+  public moveAndCheck(isRow: boolean, needReverse: boolean) {
+    this.animating = this.move(isRow, needReverse);
   }
 
   public isGameOver(): boolean {
@@ -196,7 +196,12 @@ export default class Board extends Vue {
   private canMove(row: TileInfo[]): boolean {
     for (let index = 0; index < row.length - 1; index++) {
       const number = row[index].number;
-      if (number === row[index + 1].number) return true;
+      const next = row[index + 1].number;
+      if (number === 0) {
+        if (next != 0) return true;
+      } else {
+        if (next === number || next === 0) return true;
+      }
     }
     return false;
   }
@@ -270,7 +275,8 @@ export default class Board extends Vue {
   resetAndPutNew() {
     this.refreshTile();
 
-    const number = Math.round(Math.random() + 1);
+    // 0.9 ==> 2, 0.1 ===> 4
+    const number = Math.round(Math.random() + 0.6);
     this.putNumber(number);
     this.animating = false;
     if (this.isGameOver()) {

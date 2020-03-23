@@ -4,7 +4,10 @@
     style="max-width: 600px;  min-width: 300px; "
   >
     <v-row no-gutters class="px-3 flex-nowrap align-center">
-      <v-switch class="col-4" label="Auto" v-model="auto"></v-switch>
+      <div class="col-4">
+        <v-switch class="float-left" label="Auto" v-model="auto"></v-switch>
+      </div>
+
       <span class="headline col-4">
         Score: <animated-int :value="score"></animated-int
       ></span>
@@ -158,7 +161,7 @@ export default class Game2048 extends Vue {
         board.createBoard(this.size);
       }
 
-      this.auto2048 = new Auto2048(this.tiles, this.size, Algorithm.CLOCKWISE);
+      this.auto2048 = new Auto2048(this.tiles, this.size, Algorithm.CORNER);
       this.intervalId = setInterval(() => {
         if (this.auto && this.gaming) {
           const next = this.auto2048.next();
