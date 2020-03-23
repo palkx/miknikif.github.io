@@ -31,7 +31,7 @@ function moveScore(row: Tile[], needReverse: boolean): number {
   let previousIndex = 0;
   let score = 0;
   let changed = false;
-  
+
   for (let index = 1; index < array.length; index++) {
     if (array[index] === 0) continue;
     while (
@@ -49,7 +49,7 @@ function moveScore(row: Tile[], needReverse: boolean): number {
         array[previousIndex] += 1;
         score += Math.pow(2, array[previousIndex]);
         previousIndex++;
-        
+
       }
       array[index] = 0;
       changed = true;
@@ -94,22 +94,58 @@ function score(tiles: Tile[], size: number, input: string): number {
 }
 
 class GreedyAuto implements Auto {
-  private random;
+  private keys: string[];
+
   constructor(private tiles: Tile[], private size: number) {
-    this.random = new RandomAuto();
+    this.keys = [];
   }
 
   next(): string {
     let bestScore = -1;
-    let bestKey = this.random.next();
     for (const key of DIRCETIONS) {
       const s = score(this.tiles, this.size, key);
       if (s > bestScore) {
         bestScore = s;
-        bestKey = key;
+        this.keys.length = 0;
+        this.keys.push(key);
+      } else if (s === bestScore) {
+        this.keys.push(key);
       }
     }
-    return bestKey;
+    return this.keys[Math.floor(Math.random() * this.keys.length)];
+  }
+}
+
+// nothing improved at all
+class ImprovedGreedyAuto extends GreedyAuto {
+
+  record: Set<string> = new Set();
+  count = 0;
+  nextActions: string[] = [];
+
+  next(): string {
+    const superNext = super.next()
+    this.record.add(superNext);
+    this.count++;
+
+    if (this.count > 10) {
+      this.count = 0;
+      if (this.record.size < 3) {
+        for (const key of DIRCETIONS) {
+          if (!this.record.has(key)) {
+            this.nextActions.push(key);
+          }
+        }
+        console.log(this.nextActions);
+        this.record.clear();
+      }
+    }
+    const nextRecord = this.nextActions.pop();
+    if (nextRecord) {
+      return nextRecord;
+    } else {
+      return superNext;
+    }
   }
 }
 
@@ -141,6 +177,7 @@ enum Algorithm {
   RANDOM,
   CLOCKWISE,
   GREEDY,
+  IMRPOVED_GREEDY,
   CORNER
 }
 
@@ -168,6 +205,9 @@ export default class Auto2048 {
         break;
       case Algorithm.GREEDY:
         this.auto = new GreedyAuto(this.tiles, this.size);
+        break;
+      case Algorithm.IMRPOVED_GREEDY:
+        this.auto = new ImprovedGreedyAuto(this.tiles, this.size);
         break;
       case Algorithm.CORNER:
         this.auto = new CornerAuto(this.tiles, this.size);
