@@ -22,11 +22,10 @@ class ClockwiseAuto implements Auto {
 
 // check the score you can get by move a row
 // -1 means cannot move
-function moveScore(row: Tile[], needReverse: boolean): number {
+function moveScore(array: number[], needReverse: boolean): number {
   if (needReverse) {
-    row = row.reverse();
+    array = array.reverse();
   }
-  const array = row.map(tile => tile.number);
 
   let previousIndex = 0;
   let score = 0;
@@ -64,11 +63,11 @@ function moveScore(row: Tile[], needReverse: boolean): number {
 }
 
 // -1 means cannot move
-function score(tiles: Tile[], size: number, input: string): number {
+function score(tiles: number[], size: number, input: string): number {
   if (!DIRCETIONS.includes(input)) {
     return -1;
   }
-
+  tiles = tiles.slice();
   let moved = false;
   let sumScore = 0;
   const needReverse = input === "s" || input === "d";
@@ -76,9 +75,9 @@ function score(tiles: Tile[], size: number, input: string): number {
   for (let index = 0; index < size; index++) {
     let score: number;
     if (isRow) {
-      score = moveScore(tiles.filter(tile => tile.row === index), needReverse);
+      score = moveScore(tiles.filter((_tile, i) => Math.floor(i / size) === index), needReverse);
     } else {
-      score = moveScore(tiles.filter(tile => tile.column === index), needReverse);
+      score = moveScore(tiles.filter((_tile, i) => i % size === index), needReverse);
     }
     if (score >= 0) {
       sumScore += score;
@@ -101,9 +100,10 @@ class GreedyAuto implements Auto {
   }
 
   next(): string {
+    const array = this.tiles.map(tile => tile.number);
     let bestScore = -1;
     for (const key of DIRCETIONS) {
-      const s = score(this.tiles, this.size, key);
+      const s = score(array, this.size, key);
       if (s > bestScore) {
         bestScore = s;
         this.keys.length = 0;
@@ -149,6 +149,10 @@ class ImprovedGreedyAuto extends GreedyAuto {
   }
 }
 
+// class GreedyNAuto implements Auto {
+
+// }
+
 class CornerAuto implements Auto {
   private leftTop = ["a", "w"];
   private rightBottom = ["d", "s"];
@@ -160,8 +164,9 @@ class CornerAuto implements Auto {
   }
 
   next(): string {
-    if (score(this.tiles, this.size, this.current[0]) === -1 &&
-      score(this.tiles, this.size, this.current[1]) === -1) {
+    const array = this.tiles.map(tile => tile.number);
+    if (score(array, this.size, this.current[0]) === -1 &&
+      score(array, this.size, this.current[1]) === -1) {
       if (this.current === this.leftTop) {
         this.current = this.rightBottom;
       } else {
