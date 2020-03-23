@@ -4,20 +4,20 @@
     style="max-width: 600px;  min-width: 300px; "
   >
     <v-row no-gutters class="px-3 flex-nowrap align-center">
-      <v-switch label="Auto Mode" v-model="auto"></v-switch>
-      <v-spacer></v-spacer>
-      <span class="headline">
+      <v-switch class="col-4" label="Auto" v-model="auto"></v-switch>
+      <span class="headline col-4">
         Score: <animated-int :value="score"></animated-int
       ></span>
-      <v-spacer></v-spacer>
-      <v-btn
-        id="open-menu"
-        icon
-        color="primary"
-        @click.stop="showOptions = true"
-        class="headline"
-        ><v-icon>mdi-cog</v-icon>
-      </v-btn>
+      <div class="col-4">
+        <v-btn
+          class="float-right"
+          id="open-menu"
+          icon
+          color="primary"
+          @click.stop="showOptions = true"
+          ><v-icon>mdi-cog</v-icon>
+        </v-btn>
+      </div>
     </v-row>
     <v-dialog v-model="showOptions" max-width="300px" hide-overlay>
       <v-card>
