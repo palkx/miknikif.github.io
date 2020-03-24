@@ -210,9 +210,10 @@ export default class Game2048 extends Vue {
     return array;
   }
 
-  changeStrategy(alogrithm: string) {
+  changeStrategy(algorithm: string) {
     this.showAutoSettings = false;
-    this.auto2048.setAlgorithm(Algorithm[alogrithm]);
+    this.auto2048.setAlgorithm(Algorithm[algorithm]);
+    console.log("use strategy " + algorithm);
   }
 
   saveData() {
