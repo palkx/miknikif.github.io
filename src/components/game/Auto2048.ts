@@ -151,27 +151,23 @@ function moveSteps(tiles: number[], size: number, step: number) {
   };
 }
 
-class GreedyAuto implements Auto {
-  private keys: string[];
+class GreedyNAuto implements Auto {
 
-  constructor(private tiles: Tile[], private size: number) {
-    this.keys = [];
+  constructor(private tiles: Tile[], private size: number, private defaultStep: number = 3) {
   }
 
   next(): string {
     const array = this.tiles.map(tile => tile.number);
-    let bestScore = -1;
-    for (const key of DIRCETIONS) {
-      const s = score(array, this.size, key).pop();
-      if (s && s > bestScore) {
-        bestScore = s;
-        this.keys.length = 0;
-        this.keys.push(key);
-      } else if (s === bestScore) {
-        this.keys.push(key);
-      }
-    }
-    return this.keys[Math.floor(Math.random() * this.keys.length)];
+    const bestActions = moveSteps(array, this.size, this.defaultStep).bestActions;
+    console.log("bestActions " + bestActions);
+    return bestActions[0];
+  }
+}
+
+class GreedyAuto extends GreedyNAuto {
+
+  constructor(tiles: Tile[], size: number) {
+    super(tiles, size, 1);
   }
 }
 
@@ -203,19 +199,6 @@ class ImprovedGreedyAuto extends GreedyAuto {
     } else {
       return superNext;
     }
-  }
-}
-
-class GreedyNAuto implements Auto {
-
-  constructor(private tiles: Tile[], private size: number, private defaultStep: number = 3) {
-  }
-
-  next(): string {
-    const array = this.tiles.map(tile => tile.number);
-    const bestActions = moveSteps(array, this.size, this.defaultStep).bestActions;
-    console.log("bestActions " + bestActions);
-    return bestActions[0];
   }
 }
 
@@ -251,6 +234,7 @@ enum Algorithm {
   CLOCKWISE,
   GREEDY,
   IMRPOVED_GREEDY,
+  GREEDY_2,
   GREEDY_3,
   CORNER
 }
@@ -286,6 +270,9 @@ export default class Auto2048 {
         break;
       case Algorithm.IMRPOVED_GREEDY:
         this.auto = new ImprovedGreedyAuto(this.tiles, this.size);
+        break;
+      case Algorithm.GREEDY_2:
+        this.auto = new GreedyNAuto(this.tiles, this.size, 2);
         break;
       case Algorithm.GREEDY_3:
         this.auto = new GreedyNAuto(this.tiles, this.size, 3);

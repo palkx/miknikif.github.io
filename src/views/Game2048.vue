@@ -4,17 +4,38 @@
     style="max-width: 600px;  min-width: 300px; "
   >
     <v-row no-gutters class="px-3 flex-nowrap align-center">
-      <div class="col-4">
+      <v-row no-gutters class="col-4 flex-nowrap align-center">
         <v-switch class="float-left" label="Auto" v-model="auto"></v-switch>
-      </div>
-
+        <v-btn
+          id="open-auto"
+          icon
+          color="primary"
+          @click.stop="showAutoSettings = true"
+          ><v-icon>mdi-menu-down</v-icon>
+        </v-btn>
+      </v-row>
+      <v-dialog v-model="showAutoSettings" max-width="300px" hide-overlay>
+        <v-card>
+          <v-list>
+            <v-subheader>Strategy</v-subheader>
+            <v-list-item
+              v-for="item in algorithms()"
+              :key="item"
+              link
+              @click="changeStrategy(item)"
+            >
+              <v-list-item-title v-text="item"></v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-card>
+      </v-dialog>
       <span class="headline col-4">
         Score: <animated-int :value="score"></animated-int
       ></span>
       <div class="col-4">
         <v-btn
-          class="float-right"
-          id="open-menu"
+          class="menu-right"
+          id="open-auto"
           icon
           color="primary"
           @click.stop="showOptions = true"
@@ -141,6 +162,7 @@ export default class Game2048 extends Vue {
   showOptions = false;
   showColorSetting = false;
   showSizeSetting = false;
+  showAutoSettings = false;
 
   mounted() {
     addEventListener("beforeunload", this.saveData);
@@ -178,6 +200,21 @@ export default class Game2048 extends Vue {
     removeEventListener("keyup", this.keyMonitor);
   }
 
+  algorithms() {
+    const array: string[] = [];
+    for (const key in Algorithm) {
+      if (isNaN(Number(key))) {
+        array.push(key);
+      }
+    }
+    return array;
+  }
+
+  changeStrategy(alogrithm: string) {
+    this.showAutoSettings = false;
+    this.auto2048.setAlgorithm(Algorithm[alogrithm]);
+  }
+
   saveData() {
     localStorage.score = this.score;
     localStorage.size = this.size;
@@ -192,8 +229,9 @@ export default class Game2048 extends Vue {
 
   keyMonitor(event: Event) {
     if (!(event instanceof KeyboardEvent)) return;
-    if (event.key === "Escape" && this.showOptions) {
+    if (event.key === "Escape") {
       this.showOptions = false;
+      this.showAutoSettings = false;
     }
   }
 
