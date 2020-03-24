@@ -161,11 +161,7 @@ export default class Game2048 extends Vue {
         board.createBoard(this.size);
       }
 
-      this.auto2048 = new Auto2048(
-        this.tiles,
-        this.size,
-        Algorithm.IMRPOVED_GREEDY
-      );
+      this.auto2048 = new Auto2048(this.tiles, this.size, Algorithm.GREEDY_3);
       this.intervalId = setInterval(() => {
         if (this.auto && this.gaming) {
           const next = this.auto2048.next();
