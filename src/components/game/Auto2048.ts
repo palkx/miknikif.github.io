@@ -1,6 +1,7 @@
 import Tile from "./TileInfo";
 
 const DIRCETIONS = ["w", "d", "s", "a"];
+const NEGITAVE_WEIGHT = -5;
 
 interface Auto {
   next(): string;
@@ -26,7 +27,7 @@ function needPredict(array: number[]) {
 }
 
 // check the score you can get by move a row
-// -1 means cannot move
+// NEGITAVE_WEIGHT means cannot move
 function moveRow(array: number[], needReverse: boolean): number[] {
   if (needReverse) {
     array = array.reverse();
@@ -66,15 +67,15 @@ function moveRow(array: number[], needReverse: boolean): number[] {
   if (changed) {
     array.push(score);
   } else {
-    array.push(-1);
+    array.push(NEGITAVE_WEIGHT);
   }
   return array;
 }
 
-// -1 means cannot move
+// NEGITAVE_WEIGHT means cannot move
 function moveBoard(tiles: number[], size: number, input: string): number[] {
   if (!DIRCETIONS.includes(input)) {
-    tiles.push(-1);
+    tiles.push(NEGITAVE_WEIGHT);
     return tiles;
   }
 
@@ -115,21 +116,21 @@ function moveBoard(tiles: number[], size: number, input: string): number[] {
   if (moved) {
     tiles.push(sumScore);
   } else {
-    tiles.push(-1);
+    tiles.push(NEGITAVE_WEIGHT);
   }
   return tiles;
 }
 
 // simply move n steps
-// without put new number
+// with put new number
 function moveSteps(tiles: number[], size: number, step: number, predict: boolean) {
   const bestActions: string[] = [];
-  let bestScore = -1;
+  let bestScore = NEGITAVE_WEIGHT;
 
   for (const input of DIRCETIONS) {
     const moveResult = moveBoard(tiles, size, input);
     let moveScore = moveResult.pop();
-    if (moveScore === undefined || moveScore === -1) {
+    if (moveScore === undefined || moveScore === NEGITAVE_WEIGHT) {
       continue;
     }
     if (step > 1) {
@@ -145,14 +146,13 @@ function moveSteps(tiles: number[], size: number, step: number, predict: boolean
             copy[index] = 2;
             const best4 = moveSteps(copy, size, step - 1, predict).bestScore;
             // 0.9 ==> 2, 0.1 ==> 4
-            sumScore = sumScore + (best2 === -1 ? 0 : best2) * 0.9 + (best4 === -1 ? 0 : best4) * 0.1
+            sumScore = sumScore + best2 * 0.9 + best4 * 0.1
           }
         }
         moveScore += sumScore / zeroCount;
       } else {
         const best = moveSteps(moveResult, size, step - 1, predict);
-        moveScore =
-          best.bestScore === -1 ? moveScore : moveScore + best.bestScore;
+        moveScore = moveScore + best.bestScore;
       }
     }
     if (bestScore < moveScore) {
@@ -236,8 +236,8 @@ class CornerAuto implements Auto {
   next(): string {
     const array = this.tiles.map(tile => tile.number);
     if (
-      moveBoard(array, this.size, this.current[0]).pop() === -1 &&
-      moveBoard(array, this.size, this.current[1]).pop() === -1
+      moveBoard(array, this.size, this.current[0]).pop() === NEGITAVE_WEIGHT &&
+      moveBoard(array, this.size, this.current[1]).pop() === NEGITAVE_WEIGHT
     ) {
       if (this.current === this.leftTop) {
         this.current = this.rightBottom;
