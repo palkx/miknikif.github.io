@@ -102,6 +102,14 @@
       </v-card>
     </v-dialog>
 
+    <v-row no-gutters class="px-3 flex-nowrap align-center">
+      <span class="col-6 title">
+        Strategy: <span class="subtitle-1"> {{ strategy }}</span></span
+      >
+      <!-- <span class="col-6 title float-right" v-if="!auto && gaming && showHint">
+        Hint: <span class="subtitle-1"> {{ next }}</span></span
+      > -->
+    </v-row>
     <board
       ref="board"
       @game-over="gameOver"
@@ -155,14 +163,17 @@ export default class Game2048 extends Vue {
   private auto = false;
   private intervalId: number | undefined;
   private auto2048!: Auto2048;
-  score = 0;
-  gaming = true;
-  color = "0x1eba74";
-  size = 4;
-  showOptions = false;
-  showColorSetting = false;
-  showSizeSetting = false;
-  showAutoSettings = false;
+  private score = 0;
+  private gaming = true;
+  private color = "0x1eba74";
+  private size = 4;
+  private showOptions = false;
+  private showColorSetting = false;
+  private showSizeSetting = false;
+  private showAutoSettings = false;
+  private strategy = "GREEDY_3_PREDICT";
+  // private showHint = false;
+  // private next = "";
 
   mounted() {
     addEventListener("beforeunload", this.saveData);
@@ -183,11 +194,14 @@ export default class Game2048 extends Vue {
         board.createBoard(this.size);
       }
 
-      this.auto2048 = new Auto2048(this.tiles, this.size, Algorithm.GREEDY_3);
+      this.auto2048 = new Auto2048(
+        this.tiles,
+        this.size,
+        Algorithm.GREEDY_3_PREDICT
+      );
       this.intervalId = setInterval(() => {
         if (this.auto && this.gaming) {
           const next = this.auto2048.next();
-          // console.log("next action " + next);
           this.autoMove(next);
         }
       }, 100);
@@ -212,9 +226,9 @@ export default class Game2048 extends Vue {
   }
 
   changeStrategy(algorithm: string) {
+    this.strategy = algorithm;
     this.showAutoSettings = false;
     this.auto2048.setAlgorithm(Algorithm[algorithm]);
-    console.log("use strategy " + algorithm);
   }
 
   saveData() {

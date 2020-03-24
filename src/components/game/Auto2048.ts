@@ -22,7 +22,7 @@ class ClockwiseAuto implements Auto {
 
 function needPredict(array: number[]) {
   const zeros = array.filter(number => number === 0).length
-  return zeros > 0 && zeros < array.length * 0.8 && zeros <= 10;
+  return zeros > 0 && zeros < array.length * 0.6 && zeros <= 10;
 }
 
 // check the score you can get by move a row
