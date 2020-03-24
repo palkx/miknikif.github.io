@@ -245,9 +245,12 @@ export default class Game2048 extends Vue {
 
   keyMonitor(event: Event) {
     if (!(event instanceof KeyboardEvent)) return;
-    if (event.key === "Escape") {
+    if (event.code === "Escape") {
       this.showOptions = false;
       this.showAutoSettings = false;
+    }
+    if (!this.gaming && event.code === "Space") {
+      this.restart();
     }
   }
 
