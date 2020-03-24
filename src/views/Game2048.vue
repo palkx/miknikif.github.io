@@ -34,7 +34,7 @@
       ></span>
       <div class="col-4">
         <v-btn
-          class="menu-right"
+          class="menu-right float-right"
           id="open-auto"
           icon
           color="primary"
@@ -187,6 +187,7 @@ export default class Game2048 extends Vue {
       this.intervalId = setInterval(() => {
         if (this.auto && this.gaming) {
           const next = this.auto2048.next();
+          // console.log("next action " + next);
           this.autoMove(next);
         }
       }, 100);

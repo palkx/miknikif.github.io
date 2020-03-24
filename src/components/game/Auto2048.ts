@@ -20,9 +20,14 @@ class ClockwiseAuto implements Auto {
   }
 }
 
+function needPredict(array: number[]) {
+  const zeros = array.filter(number => number === 0).length
+  return zeros > 0 && zeros < array.length * 0.8 && zeros <= 10;
+}
+
 // check the score you can get by move a row
 // -1 means cannot move
-function moveScore(array: number[], needReverse: boolean): number[] {
+function moveRow(array: number[], needReverse: boolean): number[] {
   if (needReverse) {
     array = array.reverse();
   }
@@ -67,7 +72,7 @@ function moveScore(array: number[], needReverse: boolean): number[] {
 }
 
 // -1 means cannot move
-function score(tiles: number[], size: number, input: string): number[] {
+function moveBoard(tiles: number[], size: number, input: string): number[] {
   if (!DIRCETIONS.includes(input)) {
     tiles.push(-1);
     return tiles;
@@ -82,14 +87,13 @@ function score(tiles: number[], size: number, input: string): number[] {
     let score: number | undefined;
     let row: number[];
     if (isRow) {
-      row = moveScore(
+      row = moveRow(
         tiles.filter((_tile, i) => Math.floor(i / size) === index),
         needReverse
       );
       score = row.pop();
-
     } else {
-      row = moveScore(
+      row = moveRow(
         tiles.filter((_tile, i) => i % size === index),
         needReverse
       );
@@ -118,54 +122,71 @@ function score(tiles: number[], size: number, input: string): number[] {
 
 // simply move n steps
 // without put new number
-function moveSteps(tiles: number[], size: number, step: number) {
-  const bestActions: string[][] = [];
+function moveSteps(tiles: number[], size: number, step: number, predict: boolean) {
+  const bestActions: string[] = [];
   let bestScore = -1;
 
   for (const input of DIRCETIONS) {
-    const actions = [input];
-    const moveResult = score(tiles, size, input);
-
+    const moveResult = moveBoard(tiles, size, input);
     let moveScore = moveResult.pop();
     if (moveScore === undefined || moveScore === -1) {
       continue;
     }
     if (step > 1) {
-      const best = moveSteps(moveResult, size, step - 1);
-
-      moveScore = best.bestScore === -1 ? moveScore : moveScore + best.bestScore;
-      actions.push(...best.bestActions);
+      if (needPredict(tiles) && predict) {
+        let zeroCount = 0;
+        let sumScore = 0;
+        for (let index = 0; index < tiles.length; index++) {
+          if (tiles[index] === 0) {
+            zeroCount++;
+            const copy = moveResult.slice()
+            copy[index] = 1;
+            const best2 = moveSteps(copy, size, step - 1, predict).bestScore;
+            copy[index] = 2;
+            const best4 = moveSteps(copy, size, step - 1, predict).bestScore;
+            // 0.9 ==> 2, 0.1 ==> 4
+            sumScore = sumScore + (best2 === -1 ? 0 : best2) * 0.9 + (best4 === -1 ? 0 : best4) * 0.1
+          }
+        }
+        moveScore += sumScore / zeroCount;
+      } else {
+        const best = moveSteps(moveResult, size, step - 1, predict);
+        moveScore =
+          best.bestScore === -1 ? moveScore : moveScore + best.bestScore;
+      }
     }
     if (bestScore < moveScore) {
       bestScore = moveScore;
       bestActions.length = 0;
-      bestActions.push(actions);
+      bestActions.push(input);
     } else if (bestScore === moveScore) {
-      bestActions.push(actions);
+      bestActions.push(input);
     }
   }
 
   return {
-    bestActions: bestActions[Math.floor(Math.random() * bestActions.length)],
+    bestAction: bestActions[Math.floor(Math.random() * bestActions.length)],
     bestScore: bestScore
   };
 }
 
 class GreedyNAuto implements Auto {
-
-  constructor(private tiles: Tile[], private size: number, private defaultStep: number = 3) {
-  }
+  constructor(
+    private tiles: Tile[],
+    private size: number,
+    private defaultStep: number = 3,
+    private predict: boolean = false
+  ) { }
 
   next(): string {
     const array = this.tiles.map(tile => tile.number);
-    const bestActions = moveSteps(array, this.size, this.defaultStep).bestActions;
-    console.log("bestActions " + bestActions);
-    return bestActions[0];
+    const bestActions = moveSteps(array, this.size, this.defaultStep, this.predict)
+      .bestAction;
+    return bestActions;
   }
 }
 
 class GreedyAuto extends GreedyNAuto {
-
   constructor(tiles: Tile[], size: number) {
     super(tiles, size, 1);
   }
@@ -215,8 +236,8 @@ class CornerAuto implements Auto {
   next(): string {
     const array = this.tiles.map(tile => tile.number);
     if (
-      score(array, this.size, this.current[0]).pop() === -1 &&
-      score(array, this.size, this.current[1]).pop() === -1
+      moveBoard(array, this.size, this.current[0]).pop() === -1 &&
+      moveBoard(array, this.size, this.current[1]).pop() === -1
     ) {
       if (this.current === this.leftTop) {
         this.current = this.rightBottom;
@@ -235,7 +256,10 @@ enum Algorithm {
   GREEDY,
   IMRPOVED_GREEDY,
   GREEDY_2,
+  GREEDY_2_PREDICT,
   GREEDY_3,
+  GREEDY_3_PREDICT,
+  GREEDY_4,
   CORNER
 }
 
@@ -274,8 +298,17 @@ export default class Auto2048 {
       case Algorithm.GREEDY_2:
         this.auto = new GreedyNAuto(this.tiles, this.size, 2);
         break;
+      case Algorithm.GREEDY_2_PREDICT:
+        this.auto = new GreedyNAuto(this.tiles, this.size, 2, true);
+        break;
       case Algorithm.GREEDY_3:
         this.auto = new GreedyNAuto(this.tiles, this.size, 3);
+        break;
+      case Algorithm.GREEDY_3_PREDICT:
+        this.auto = new GreedyNAuto(this.tiles, this.size, 3, true);
+        break;
+      case Algorithm.GREEDY_4:
+        this.auto = new GreedyNAuto(this.tiles, this.size, 4);
         break;
       case Algorithm.CORNER:
         this.auto = new CornerAuto(this.tiles, this.size);
