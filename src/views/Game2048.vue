@@ -103,10 +103,12 @@
     </v-dialog>
 
     <v-row no-gutters class="px-3 flex-nowrap align-center">
-      <span class="col-6 title">
-        Strategy: <span class="subtitle-1"> {{ strategy }}</span></span
-      >
-      <span class="col-6 title float-right" v-if="!auto && gaming">
+      <span class="title">
+        Strategy:
+        <span class="subtitle-1"> {{ beautifiedStrategy(strategy) }}</span>
+      </span>
+      <v-spacer></v-spacer>
+      <span class="title float-right" v-if="!auto && gaming">
         Hint: <v-icon>{{ next }}</v-icon></span
       >
     </v-row>
@@ -230,6 +232,10 @@ export default class Game2048 extends Vue {
     this.strategy = algorithm;
     this.showAutoSettings = false;
     this.auto2048.setAlgorithm(Algorithm[algorithm]);
+  }
+
+  beautifiedStrategy(strategy: string): string {
+    return strategy.toLowerCase().replace(/_/g, " ");
   }
 
   showNextHint() {
