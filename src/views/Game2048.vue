@@ -106,14 +106,15 @@
       <span class="col-6 title">
         Strategy: <span class="subtitle-1"> {{ strategy }}</span></span
       >
-      <!-- <span class="col-6 title float-right" v-if="!auto && gaming && showHint">
-        Hint: <span class="subtitle-1"> {{ next }}</span></span
-      > -->
+      <span class="col-6 title float-right" v-if="!auto && gaming">
+        Hint: <v-icon>{{ next }}</v-icon></span
+      >
     </v-row>
     <board
       ref="board"
       @game-over="gameOver"
       @score-changed="addScore"
+      @next-hint="showNextHint"
       :tile-color="color"
       :reduced-animation="auto"
     />
@@ -172,8 +173,7 @@ export default class Game2048 extends Vue {
   private showSizeSetting = false;
   private showAutoSettings = false;
   private strategy = "GREEDY_3_PREDICT";
-  // private showHint = false;
-  // private next = "";
+  private next = "";
 
   mounted() {
     addEventListener("beforeunload", this.saveData);
@@ -205,6 +205,7 @@ export default class Game2048 extends Vue {
           this.autoMove(next);
         }
       }, 100);
+      this.showNextHint();
     }
   }
 
@@ -229,6 +230,25 @@ export default class Game2048 extends Vue {
     this.strategy = algorithm;
     this.showAutoSettings = false;
     this.auto2048.setAlgorithm(Algorithm[algorithm]);
+  }
+
+  showNextHint() {
+    const next = this.auto2048.next();
+    switch (next) {
+      case "w":
+        this.next = "mdi-arrow-up-bold";
+        break;
+      case "a":
+        this.next = "mdi-arrow-left-bold";
+        break;
+      case "s":
+        this.next = "mdi-arrow-down-bold";
+        break;
+      case "d":
+      default:
+        this.next = "mdi-arrow-right-bold";
+        break;
+    }
   }
 
   saveData() {

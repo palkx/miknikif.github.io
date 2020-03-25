@@ -282,6 +282,8 @@ export default class Board extends Vue {
     if (this.isGameOver()) {
       this.$emit("game-over");
       this.gaming = false;
+    } else {
+      this.$emit("next-hint");
     }
   }
 
