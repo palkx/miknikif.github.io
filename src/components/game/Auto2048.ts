@@ -271,6 +271,8 @@ export default class Auto2048 {
     public size: number,
     public algorithm: Algorithm
   ) {
+    console.log("constructor " + this.tiles);
+    
     this.setAlgorithm(algorithm);
   }
 

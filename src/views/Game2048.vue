@@ -205,12 +205,11 @@ export default class Game2048 extends Vue {
   mounted() {
     addEventListener("beforeunload", this.saveData);
     addEventListener("keyup", this.keyMonitor);
+    this.init();
     const board = this.$refs.board;
     if (board instanceof Board) {
       if (this.hasSaveData()) {
-        this.size = parseInt(localStorage.size);
         this.score = parseInt(localStorage.score);
-        this.animationDuration = parseInt(localStorage.animationDuration);
         this.$emit("score-changed", this.score);
         for (const json of JSON.parse(localStorage.tiles)) {
           const tile = new TileInfo(0, 0, 0, 0);
@@ -219,7 +218,7 @@ export default class Game2048 extends Vue {
         }
         board.initGame(this.tiles, this.size);
       } else {
-        board.createBoard(this.size);
+        this.tiles = board.createBoard(this.size);
       }
 
       this.auto2048 = new Auto2048(
@@ -284,6 +283,9 @@ export default class Game2048 extends Vue {
   }
 
   saveData() {
+    if (!this.gaming) {
+      return;
+    }
     localStorage.score = this.score;
     localStorage.size = this.size;
     localStorage.animationDuration = this.animationDuration;
@@ -293,8 +295,6 @@ export default class Game2048 extends Vue {
   removeSaveData() {
     localStorage.removeItem("tiles");
     localStorage.removeItem("score");
-    localStorage.removeItem("size");
-    localStorage.removeItem("animationDuration");
   }
 
   keyMonitor(event: Event) {
@@ -308,13 +308,17 @@ export default class Game2048 extends Vue {
     }
   }
 
+  init() {
+    if (localStorage.size) {
+      this.size = parseInt(localStorage.size);
+    }
+    if (localStorage.animationDuration) {
+      this.animationDuration = parseInt(localStorage.animationDuration);
+    }
+  }
+
   hasSaveData(): boolean {
-    return (
-      localStorage.tiles &&
-      localStorage.size &&
-      localStorage.score &&
-      localStorage.animationDuration
-    );
+    return localStorage.tiles && localStorage.score;
   }
 
   private restart() {

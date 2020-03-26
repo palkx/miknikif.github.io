@@ -55,7 +55,7 @@ export default class Board extends Vue {
     this.unmoniterKey();
   }
 
-  public createBoard(size: number = this.size) {
+  public createBoard(size: number = this.size): TileInfo[] {
     this.size = size;
     this.tiles.length = 0;
     for (let index = 0; index < this.size * this.size; index++) {
@@ -71,6 +71,7 @@ export default class Board extends Vue {
     this.putNumber();
     // this.putALotNumbers();
     this.gaming = true;
+    return this.tiles;
   }
 
   get sizeStyle(): Record<string, string> {
