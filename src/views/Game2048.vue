@@ -95,6 +95,28 @@
           color="primary"
           dark
           class="ma-2 settings-button"
+          @click="showAnimationSetting = !showAnimationSetting"
+        >
+          Animation
+        </v-btn>
+        <v-expand-transition>
+          <v-slider
+            class="px-6"
+            dense
+            hide-details
+            min="50"
+            max="1000"
+            v-if="showAnimationSetting"
+            v-model="animationDuration"
+            thumb-label
+          ></v-slider>
+        </v-expand-transition>
+        <v-btn
+          rounded
+          outlined
+          color="primary"
+          dark
+          class="ma-2 settings-button"
           @click="restart()"
         >
           Restart
@@ -119,6 +141,7 @@
       @next-hint="showNextHint"
       :tile-color="color"
       :reduced-animation="auto"
+      :animation-duration="animationDuration"
     />
 
     <transition name="fade" mode="out-in">
@@ -173,9 +196,11 @@ export default class Game2048 extends Vue {
   private showOptions = false;
   private showColorSetting = false;
   private showSizeSetting = false;
+  private showAnimationSetting = false;
   private showAutoSettings = false;
   private strategy = "GREEDY_3_PREDICT";
   private next = "";
+  private animationDuration = 300;
 
   mounted() {
     addEventListener("beforeunload", this.saveData);
@@ -185,6 +210,7 @@ export default class Game2048 extends Vue {
       if (this.hasSaveData()) {
         this.size = parseInt(localStorage.size);
         this.score = parseInt(localStorage.score);
+        this.animationDuration = parseInt(localStorage.animationDuration);
         this.$emit("score-changed", this.score);
         for (const json of JSON.parse(localStorage.tiles)) {
           const tile = new TileInfo(0, 0, 0, 0);
@@ -260,6 +286,7 @@ export default class Game2048 extends Vue {
   saveData() {
     localStorage.score = this.score;
     localStorage.size = this.size;
+    localStorage.animationDuration = this.animationDuration;
     localStorage.tiles = JSON.stringify(this.tiles);
   }
 
@@ -267,6 +294,7 @@ export default class Game2048 extends Vue {
     localStorage.removeItem("tiles");
     localStorage.removeItem("score");
     localStorage.removeItem("size");
+    localStorage.removeItem("animationDuration");
   }
 
   keyMonitor(event: Event) {
@@ -281,7 +309,12 @@ export default class Game2048 extends Vue {
   }
 
   hasSaveData(): boolean {
-    return localStorage.tiles && localStorage.size && localStorage.score;
+    return (
+      localStorage.tiles &&
+      localStorage.size &&
+      localStorage.score &&
+      localStorage.animationDuration
+    );
   }
 
   private restart() {

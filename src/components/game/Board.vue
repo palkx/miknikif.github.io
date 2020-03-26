@@ -10,6 +10,7 @@
         :color="tileColor"
         :font-scale="size"
         :reduced-animation="reducedAnimation"
+        :animation-duration="animationDuration"
         @finish-moving="finishMoving"
         :style="sizeStyle"
       ></tile>
@@ -30,6 +31,7 @@ import TileInfo from "@/components/game/TileInfo.ts";
 export default class Board extends Vue {
   @Prop({ default: "0x1eba74" }) tileColor!: string;
   @Prop({ default: false }) readonly reducedAnimation!: boolean;
+  @Prop({ default: 300 }) readonly animationDuration!: number;
   private size = 4;
   private tiles: TileInfo[] = [];
   private gaming = true;

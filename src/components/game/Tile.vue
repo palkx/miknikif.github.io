@@ -23,6 +23,7 @@ export default class Tile extends Vue {
   @Prop({ required: true }) readonly color!: string;
   @Prop({ required: true }) readonly fontScale!: number;
   @Prop({ default: false }) readonly reducedAnimation!: boolean;
+  @Prop({ default: 300 }) readonly animationDuration!: number;
 
   MAX = 12;
   moveATile = 111.11;
@@ -110,7 +111,9 @@ export default class Tile extends Vue {
     if (this.reducedAnimation) {
       return 50;
     } else {
-      return Math.random() * 200 + 200;
+      return (
+        (Math.random() * this.animationDuration + this.animationDuration) / 2
+      );
     }
   }
 
