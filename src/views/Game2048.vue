@@ -145,22 +145,7 @@
     />
 
     <transition name="fade" mode="out-in">
-      <div class="arrow-controls" v-if="gaming" key="game-control">
-        <v-btn rounded color="primary" class="ma-0" @click="manualMove('w')">
-          <v-icon>mdi-arrow-up-bold</v-icon>
-        </v-btn>
-        <br />
-        <v-btn rounded color="primary" class="ma-2" @click="manualMove('a')">
-          <v-icon>mdi-arrow-left-bold</v-icon>
-        </v-btn>
-        <v-btn rounded color="primary" class="ma-2" @click="manualMove('d')">
-          <v-icon>mdi-arrow-right-bold</v-icon>
-        </v-btn>
-        <br />
-        <v-btn rounded color="primary" class="ma-0" @click="manualMove('s')">
-          <v-icon>mdi-arrow-down-bold</v-icon>
-        </v-btn>
-      </div>
+      <control v-if="gaming" @onKey="manualMove"></control>
       <div class="restart" v-else key="restart">
         <h2>Game Over!</h2>
         <v-btn @click="restart" rounded color="primary" dark class="ma-2">
@@ -174,6 +159,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Board from "@/components/game/Board.vue";
+import Control from "@/components/game/Control.vue";
 import TileInfo from "@/components/game/TileInfo.ts";
 import AnimatedInt from "@/components/AnimatedInt.vue";
 import Auto2048, { Algorithm } from "@/components/game/Auto2048.ts";
@@ -181,7 +167,8 @@ import Auto2048, { Algorithm } from "@/components/game/Auto2048.ts";
 @Component({
   components: {
     Board,
-    AnimatedInt
+    AnimatedInt,
+    Control
   }
 })
 export default class Game2048 extends Vue {
@@ -391,12 +378,6 @@ export default class Game2048 extends Vue {
 .scroll-leave {
   /* a hardcoded height to make the transition looks right */
   height: 220px;
-}
-
-@media only screen and (min-width: 600px) {
-  .arrow-controls {
-    display: none;
-  }
 }
 
 .settings-button {

@@ -22,7 +22,7 @@ class ClockwiseAuto implements Auto {
 }
 
 function needPredict(array: number[]) {
-  const zeros = array.filter(number => number === 0).length
+  const zeros = array.filter(number => number === 0).length;
   return zeros > 0 && zeros < array.length * 0.6 && zeros <= 10;
 }
 
@@ -123,7 +123,12 @@ function moveBoard(tiles: number[], size: number, input: string): number[] {
 
 // simply move n steps
 // with put new number
-function moveSteps(tiles: number[], size: number, step: number, predict: boolean) {
+function moveSteps(
+  tiles: number[],
+  size: number,
+  step: number,
+  predict: boolean
+) {
   const bestActions: string[] = [];
   let bestScore = NEGITAVE_WEIGHT;
 
@@ -140,13 +145,13 @@ function moveSteps(tiles: number[], size: number, step: number, predict: boolean
         for (let index = 0; index < tiles.length; index++) {
           if (tiles[index] === 0) {
             zeroCount++;
-            const copy = moveResult.slice()
+            const copy = moveResult.slice();
             copy[index] = 1;
             const best2 = moveSteps(copy, size, step - 1, predict).bestScore;
             copy[index] = 2;
             const best4 = moveSteps(copy, size, step - 1, predict).bestScore;
             // 0.9 ==> 2, 0.1 ==> 4
-            sumScore = sumScore + best2 * 0.9 + best4 * 0.1
+            sumScore = sumScore + best2 * 0.9 + best4 * 0.1;
           }
         }
         moveScore += sumScore / zeroCount;
@@ -176,12 +181,16 @@ class GreedyNAuto implements Auto {
     private size: number,
     private defaultStep: number = 3,
     private predict: boolean = false
-  ) { }
+  ) {}
 
   next(): string {
     const array = this.tiles.map(tile => tile.number);
-    const bestActions = moveSteps(array, this.size, this.defaultStep, this.predict)
-      .bestAction;
+    const bestActions = moveSteps(
+      array,
+      this.size,
+      this.defaultStep,
+      this.predict
+    ).bestAction;
     return bestActions;
   }
 }
@@ -271,8 +280,6 @@ export default class Auto2048 {
     public size: number,
     public algorithm: Algorithm
   ) {
-    console.log("constructor " + this.tiles);
-    
     this.setAlgorithm(algorithm);
   }
 

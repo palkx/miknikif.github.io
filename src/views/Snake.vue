@@ -1,37 +1,46 @@
 <template>
-  <v-responsive :aspect-ratio="1 / 1" class="container">
-    <div class="board">
-      <div
-        class="tile"
-        v-for="(tile, index) in board"
-        :ref="'tile-' + index"
-        :key="index"
-        :style="showTile(tile)"
-      ></div>
-      <transition name="fade">
-        <div class="centered" v-if="!gaming">
-          <div>
-            <h2 class="primary--text">Game Over!</h2>
-            <br />
-            <v-btn rounded color="primary" @click="start()">Restart</v-btn>
+  <v-container
+    class="px-2 my-5 py-0"
+    style="max-width: 600px;  min-width: 300px; "
+  >
+    <v-responsive :aspect-ratio="1 / 1" class="container">
+      <div class="board">
+        <div
+          class="tile"
+          v-for="(tile, index) in board"
+          :ref="'tile-' + index"
+          :key="index"
+          :style="showTile(tile)"
+        ></div>
+        <transition name="fade">
+          <div class="centered" v-if="!gaming">
+            <div>
+              <h2 class="primary--text">Game Over!</h2>
+              <br />
+              <v-btn rounded color="primary" @click="start()">Restart</v-btn>
+            </div>
           </div>
-        </div>
-        <div class="centered" v-else-if="gaming && paused">
-          <div>
-            <h2 class="primary--text">Paused</h2>
-            <br />
-            <v-btn rounded color="primary" @click="paused = false">
-              Resume
-            </v-btn>
+          <div class="centered" v-else-if="gaming && paused">
+            <div>
+              <h2 class="primary--text">Paused</h2>
+              <br />
+              <v-btn rounded color="primary" @click="paused = false">
+                Resume
+              </v-btn>
+            </div>
           </div>
-        </div>
-      </transition>
-    </div>
-  </v-responsive>
+        </transition>
+      </div>
+    </v-responsive>
+    <transition name="fade" mode="out-in">
+      <control v-if="gaming" @onKey="handleKey"></control>
+    </transition>
+  </v-container>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop } from "vue-property-decorator";
+import Control from "@/components/game/Control.vue";
 
 enum Type {
   Empty,
@@ -69,7 +78,11 @@ class Tile {
   }
 }
 
-@Component
+@Component({
+  components: {
+    Control
+  }
+})
 export default class Snake extends Vue {
   @Prop({ default: 10 }) private size!: number;
   private boardSize = this.size * this.size;
@@ -273,7 +286,6 @@ export default class Snake extends Vue {
 
 <style lang="scss" scoped>
 .container {
-  margin-top: 20px;
   width: 80%;
   min-width: 300px;
   max-width: 500px;
