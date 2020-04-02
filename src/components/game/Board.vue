@@ -335,9 +335,7 @@ export default class Board extends Vue {
   border-radius: 15%;
   display: flex;
   width: 22.5%;
-  width: 15%;
   height: 22.5%;
-  height: 15%;
   align-items: center;
   justify-content: center;
   background: var(--v-white-base);

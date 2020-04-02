@@ -42,7 +42,8 @@ export default Vue.extend({
     tabs: [
       { name: "2048", route: "/" },
       { name: "Todo", route: "/todo" },
-      { name: "Posts", route: "/posts" }
+      { name: "Posts", route: "/posts" },
+      { name: "Snake", route: "/snake" }
     ],
     last: { name: "About", route: "/about" }
   })
