@@ -16,6 +16,15 @@
             <v-btn rounded color="primary" @click="start()">Restart</v-btn>
           </div>
         </div>
+        <div class="centered" v-else-if="gaming && paused">
+          <div>
+            <h2 class="primary--text">Paused</h2>
+            <br />
+            <v-btn rounded color="primary" @click="paused = false">
+              Resume
+            </v-btn>
+          </div>
+        </div>
       </transition>
     </div>
   </v-responsive>
@@ -67,6 +76,7 @@ export default class Snake extends Vue {
   private board: Tile[] = [];
   private length = 3;
   private gaming = true;
+  private paused = false;
   private snake: Type[] = [];
   private next: [number, number] = [0, 0];
   private direction: [number, number] = [0, 1];
@@ -82,6 +92,16 @@ export default class Snake extends Vue {
     }
     this.moniterKey();
     this.start();
+  }
+
+  deactivated() {
+    this.paused = true;
+  }
+
+  activated() {
+    if (!this.gaming) {
+      this.paused = false;
+    }
   }
 
   init() {
@@ -105,7 +125,7 @@ export default class Snake extends Vue {
     this.decideNext();
     this.insertFruitAndRefresh();
     this.intervalId = setInterval(() => {
-      if (this.gaming) {
+      if (this.gaming && !this.paused) {
         this.decideNext();
         this.moveNext();
       }
