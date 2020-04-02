@@ -73,4 +73,14 @@ export default Vue.extend({
   top: 0;
   left: 16px;
 }
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>

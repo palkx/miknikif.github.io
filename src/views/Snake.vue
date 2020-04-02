@@ -8,6 +8,15 @@
         :key="index"
         :style="showTile(tile)"
       ></div>
+      <transition name="fade">
+        <div class="centered" v-if="!gaming">
+          <div>
+            <h2 class="primary--text">Game Over!</h2>
+            <br />
+            <v-btn rounded color="primary" @click="start()">Restart</v-btn>
+          </div>
+        </div>
+      </transition>
     </div>
   </v-responsive>
 </template>
@@ -75,8 +84,17 @@ export default class Snake extends Vue {
     this.start();
   }
 
-  start() {
+  init() {
+    this.stopInterval();
     this.board.length = 0;
+    this.snake.length = 0;
+    this.fruitCount = 0;
+    this.direction = [0, 1];
+  }
+
+  start() {
+    this.init();
+    this.gaming = true;
     for (let index = 0; index < this.boardSize; index++) {
       this.board.push(new Tile(Type.Empty));
     }
@@ -104,7 +122,6 @@ export default class Snake extends Vue {
       if (tile.type === Type.Empty) {
         tile.setType(Type.Fruit);
         this.fruitCount++;
-        break;
       }
     }
     this.snake.forEach(index => this.board[index].setType(Type.Body));
@@ -159,13 +176,20 @@ export default class Snake extends Vue {
   }
 
   gameOver() {
-    // TODO
     this.board[this.snake[0]].setType(Type.Crushed);
     this.gaming = false;
   }
 
-  destroyed() {
+  beforeDestroy() {
+    this.stopInterval();
     this.unmoniterKey();
+  }
+
+  stopInterval() {
+    if (this.intervalId) {
+      window.clearInterval(this.intervalId);
+    }
+    this.intervalId = undefined;
   }
 
   moniterKey() {
@@ -207,8 +231,7 @@ export default class Snake extends Vue {
   handleInput(input: [number, number]) {
     const head = this.snake[0];
     const next =
-      Math.floor(head / this.size) +
-      input[0] * this.size +
+      (Math.floor(head / this.size) + input[0]) * this.size +
       (head % this.size) +
       input[1];
     if (next === this.snake[1]) {
@@ -218,7 +241,7 @@ export default class Snake extends Vue {
   }
 
   showTile(tile: Tile): Record<string, string> {
-    const percent = 98 / this.size;
+    const percent = 95 / this.size;
     return {
       width: percent + "%",
       height: percent + "%",
@@ -250,10 +273,19 @@ export default class Snake extends Vue {
 
 .tile {
   border-radius: 50%;
-  display: flex;
   background: var(--v-white-base);
 }
 
+.centered {
+  width: 100%;
+  height: 100%;
+  top: 0;
+  backdrop-filter: blur(5px);
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 @media only screen and (max-width: 500px) {
   .container {
     width: 90%;
