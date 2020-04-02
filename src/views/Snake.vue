@@ -51,6 +51,11 @@ export default class Snake extends Vue {
   private length = 3;
   private gaming = true;
   private snake: Type[] = [];
+  private next: [number, number] = [0, 0];
+  private direction: [number, number] = [0, 1];
+  private intervalId: number | undefined;
+  private interval = 1000;
+  private fruitCount = 0;
 
   mounted() {
     if (this.size < 5) {
@@ -67,16 +72,88 @@ export default class Snake extends Vue {
     for (let index = 0; index < this.boardSize; index++) {
       this.board.push(new Tile(Type.Empty));
     }
-    const rowIndex = Math.floor(this.size / 2) * this.size;
-    this.snake.push(rowIndex + 2);
-    this.snake.push(rowIndex + 1);
-    this.snake.push(rowIndex + 0);
-    this.snake.forEach(index => this.board[index].setType(Type.Body));
-    console.log(this.board);
+    const rowIndex = Math.floor(this.size / 2);
+    this.snake.push(rowIndex * this.size + 2);
+    this.snake.push(rowIndex * this.size + 1);
+    this.snake.push(rowIndex * this.size + 0);
+    this.decideNext();
+    this.insertFruitAndRefresh();
+    this.intervalId = setInterval(() => {
+      if (this.gaming) {
+        this.decideNext();
+        this.moveNext();
+      }
+    }, this.interval);
   }
 
-  isEdge() {
-    // TODO
+  insertFruitAndRefresh() {
+    if (!this.gaming) {
+      return;
+    }
+    while (this.fruitCount < 2) {
+      const index = Math.floor(Math.random() * this.boardSize);
+      const tile = this.board[index];
+      if (tile.type === Type.Empty) {
+        tile.setType(Type.Fruit);
+        this.fruitCount++;
+        break;
+      }
+    }
+    this.snake.forEach(index => this.board[index].setType(Type.Body));
+  }
+
+  decideNext() {
+    const head = this.snake[0];
+    this.next[0] = Math.floor(head / this.size) + this.direction[0];
+    this.next[1] = (head % this.size) + this.direction[1];
+  }
+
+  moveNext() {
+    const nextTile = this.nextTile();
+    console.log(nextTile + " gaming" + this.gaming);
+    if (nextTile) {
+      const end = this.snake.pop();
+      if (end) {
+        this.board[end].setType(Type.Empty);
+        switch (nextTile.type) {
+          case Type.Empty:
+            this.snake.unshift(this.next[0] * this.size + this.next[1]);
+            break;
+          case Type.Fruit:
+            this.snake.unshift(this.next[0] * this.size + this.next[1]);
+            this.snake.push(end);
+            this.fruitCount--;
+            break;
+          case Type.Body:
+            this.gameOver();
+            break;
+          default:
+            break;
+        }
+        this.insertFruitAndRefresh();
+        console.log(this.snake);
+      }
+    } else {
+      this.gameOver();
+    }
+  }
+
+  withinRange(next: [number, number] = this.next): boolean {
+    return (
+      next[0] >= 0 && next[0] < this.size && next[1] >= 0 && next[1] < this.size
+    );
+  }
+
+  nextTile(): Tile | undefined {
+    if (this.withinRange()) {
+      return this.board[this.next[0] * this.size + this.next[1]];
+    }
+    return undefined;
+  }
+
+  gameOver() {
+    console.log("game over");
+    this.gaming = false;
   }
 
   destroyed() {
@@ -100,23 +177,36 @@ export default class Snake extends Vue {
     switch (key) {
       case "ArrowLeft":
       case "a":
-        // this.left();
+        this.handleInput([0, -1]);
         break;
       case "ArrowUp":
       case "w":
-        // this.up();
+        this.handleInput([-1, 0]);
         break;
       case "ArrowRight":
       case "d":
-        // this.right();
+        this.handleInput([0, 1]);
         break;
       case "ArrowDown":
       case "s":
-        // this.down();
+        this.handleInput([1, 0]);
         break;
       default:
         break;
     }
+  }
+
+  handleInput(input: [number, number]) {
+    const head = this.snake[0];
+    const next =
+      Math.floor(head / this.size) +
+      input[0] * this.size +
+      (head % this.size) +
+      input[1];
+    if (next === this.snake[1]) {
+      return;
+    }
+    this.direction = input;
   }
 
   showTile(tile: Tile): Record<string, string> {
