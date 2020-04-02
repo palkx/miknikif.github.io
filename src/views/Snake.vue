@@ -17,6 +17,8 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 
 enum Type {
   Empty,
+  Head,
+  Crushed,
   Body,
   Fruit
 }
@@ -34,11 +36,17 @@ class Tile {
         this.color = "var(--v-accent-base)";
         break;
       case Type.Body:
-        this.color = "var(--v-white-base)";
+        this.color = "var(--v-primary-lighten1)";
+        break;
+      case Type.Head:
+        this.color = "var(--v-primary-base)";
+        break;
+      case Type.Crushed:
+        this.color = "var(--v-error-base)";
         break;
       case Type.Empty:
       default:
-        this.color = "var(--v-black-base)";
+        this.color = "var(--v-black-darken4)";
     }
   }
 }
@@ -100,6 +108,7 @@ export default class Snake extends Vue {
       }
     }
     this.snake.forEach(index => this.board[index].setType(Type.Body));
+    this.board[this.snake[0]].setType(Type.Head);
   }
 
   decideNext() {
@@ -110,7 +119,6 @@ export default class Snake extends Vue {
 
   moveNext() {
     const nextTile = this.nextTile();
-    console.log(nextTile + " gaming" + this.gaming);
     if (nextTile) {
       const end = this.snake.pop();
       if (end) {
@@ -131,7 +139,6 @@ export default class Snake extends Vue {
             break;
         }
         this.insertFruitAndRefresh();
-        console.log(this.snake);
       }
     } else {
       this.gameOver();
@@ -152,7 +159,8 @@ export default class Snake extends Vue {
   }
 
   gameOver() {
-    console.log("game over");
+    // TODO
+    this.board[this.snake[0]].setType(Type.Crushed);
     this.gaming = false;
   }
 
@@ -210,7 +218,7 @@ export default class Snake extends Vue {
   }
 
   showTile(tile: Tile): Record<string, string> {
-    const percent = 95 / this.size;
+    const percent = 98 / this.size;
     return {
       width: percent + "%",
       height: percent + "%",
@@ -235,9 +243,9 @@ export default class Snake extends Vue {
   justify-content: space-around;
   align-content: space-around;
   flex-wrap: wrap;
-  border: 5px solid var(--v-black-base);
+  border: 5px solid var(--v-black-darken4);
   border-radius: 3%;
-  background: var(--v-black-base);
+  background: var(--v-black-darken4);
 }
 
 .tile {
