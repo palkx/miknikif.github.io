@@ -84,7 +84,8 @@ class Tile {
   }
 })
 export default class Snake extends Vue {
-  @Prop({ default: 10 }) private size!: number;
+  private MIN = 4;
+  @Prop({ default: 4 }) private size!: number;
   private boardSize = this.size * this.size;
   private board: Tile[] = [];
   private length = 3;
@@ -98,10 +99,9 @@ export default class Snake extends Vue {
   private fruitCount = 0;
 
   mounted() {
-    if (this.size < 5) {
-      this.size = 5;
+    if (this.size < this.MIN) {
+      this.size = this.MIN;
       this.boardSize = this.size * this.size;
-      this.board.length = this.boardSize;
     }
     this.moniterKey();
     this.start();
@@ -149,13 +149,14 @@ export default class Snake extends Vue {
     if (!this.gaming) {
       return;
     }
+
     while (this.fruitCount < 2) {
-      const index = Math.floor(Math.random() * this.boardSize);
-      const tile = this.board[index];
-      if (tile.type === Type.Empty) {
-        tile.setType(Type.Fruit);
-        this.fruitCount++;
-      }
+      // console.log("this.fruitCount " + this.fruitCount);
+      const emptys = this.board.filter(tile => tile.type === Type.Empty);
+      if (emptys.length === 0) break;
+      const index = Math.floor(Math.random() * emptys.length);
+      emptys[index].setType(Type.Fruit);
+      this.fruitCount++;
     }
     this.snake.forEach(index => this.board[index].setType(Type.Body));
     this.board[this.snake[0]].setType(Type.Head);
@@ -171,7 +172,7 @@ export default class Snake extends Vue {
     const nextTile = this.nextTile();
     if (nextTile) {
       const end = this.snake.pop();
-      if (end) {
+      if (end != undefined) {
         this.board[end].setType(Type.Empty);
         switch (nextTile.type) {
           case Type.Empty:
