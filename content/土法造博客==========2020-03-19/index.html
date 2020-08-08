@@ -1,0 +1,51 @@
+{
+"title": "土法造博客",
+"date": "2020-03-19",
+"refs": {
+"https://github.com/nestorm001/nestorm001.github.io":"项目地址",
+"https://github.com/nestorm001":"",
+"https://stackoverflow.com/questions/39199042/serve-json-data-from-github-pages/50667394#50667394":"之前提到的回答"
+}
+}
+==========
+
+## 设想
+
+为了练习各种科技，想着不如自己用 **Github Pages** 搭个博客，于是就开始搞了起来。  
+至于为什么不用现成的工具，这不是好玩么。
+~~重复造轮子真好玩。~~
+整理一下思路，用我浅薄的知识，想到如下方案：
+
+1. 用 Markdown 写内容，写完之后一起打包到 dist。
+1. 在浏览器用某些肯定存在的科技做网络请求，获取 Markdown 内容。
+1. 用某些应该存在的科技把 Markdown 转成 HTML。
+1. 展示。
+
+## 现实
+
+设想很美好，现实很残酷，路上有一堆坑等着踩。
+
+### 无法获取文件
+
+由于 Github 的某些特性，打包到 dist 的文件无法直接通过路径获取，在折腾许久之后，甚至想过用 raw content 这种丑陋的办法。
+后来，偶然间看到一个 [stackoverflow 的回答](https://stackoverflow.com/questions/39199042/serve-json-data-from-github-pages/50667394#50667394)，让我看到了一点希望————给每个文件建一个文件夹，并把文件重命名为 index.html（试过 .md，有坑）。
+为了实现这一过程，还顺便看了看 shell 命令。
+
+### 无法获取 metadata
+
+用
+
+```markdown
+---
+meta:meta,
+data:data
+---
+```
+
+形式写的 metadata 被 Github 吞了，为了获取，搞出了丑陋的方案。
+Markdown 上半部分写 Json，下半部分写内容，中间用 `=====`~~（一共10个）~~`=====` 分割。
+噗，由于写了十个等号被分割了，只能意思一下了。
+
+### 后续
+
+总觉得还碰到了许多别的坑，算了，懒得回忆了。至此，一个简单的博客算是可以用了，后续还要改改样式加加内容。

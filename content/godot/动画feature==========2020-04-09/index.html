@@ -1,0 +1,29 @@
+{
+  "title": "Godot AnimatedSprite 自以为是 bug 的 feature",
+  "date": "2020-04-09",
+  "refs": {
+    "https://www.davidepesce.com/2019/11/25/godot-tutorial-11-attacks-damage-death/": "教程"
+  }
+}
+==========
+## 过程
+最近又抄起了 Godot 的各种教程玩。
+作为一个 ARPG，施法慢怎么能忍，于是改了各种限制，快速放小火球。
+使用 `AnimatedSprite` 放动画时，出现了奇怪的问题，当施法过快时，动画就卡在最后一帧了。
+起初以为是自己逻辑写得有问题，在各种调试、打 log 之后发现了奇怪的数据。
+
+```
+2420 down_fireball (animation_finished)
+2420 down_fireball 2 (frame_changed)
+2436 down_walk 0
+2485 fire ball (cast fire ball)
+2620 down_fireball 1
+2770 down_fireball 2
+2904 down_fireball
+2904 down_fireball 2
+2923 fire ball
+3053 down_fireball 2
+```
+
+突然发现 animation 的 frame 似乎不是很正常，那么大概率是自己又误会了什么导致干了蠢事。
+于是，在 `play` 之前加上 `frame = 0` 应该就好了，经测试，果然，呵呵。
