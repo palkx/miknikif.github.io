@@ -25,6 +25,7 @@
     "vuex": "^3.1.2"
   },
   "devDependencies": {
+    "@babel/compat-data": "^7.11.0",
     "@types/jest": "^24.0.19",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
