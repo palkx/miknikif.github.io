@@ -4,7 +4,7 @@ node_js:
 
 cache: npm
 
-script: npm run bc
+script: npm run bc && echo "xaked.com" > CNAME
 
 deploy:
   provider: pages
